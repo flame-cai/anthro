@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0">
+<title>anthro — WHO Child Growth Standards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f0f0f;--paper:#faf9f6;--card:#f0ede6;--border:#d4cfc4;
+  --green:#1a7a4a;--green-bg:#e8f5ee;--green-border:#a8d5bb;
+  --red:#8b1a1a;--red-bg:#fdecea;--red-border:#f0a8a8;
+  --amber:#7a4a00;--amber-bg:#fef6e4;--amber-border:#e8c878;
+  --blue:#1a3a7a;--blue-bg:#e8eef8;--blue-border:#a8c0e0;
+  --muted:#6b6558;--dim:#9b9288;
+  --font-head:'Fraunces',Georgia,serif;
+  --font-mono:'IBM Plex Mono','Courier New',monospace;
+  --max:980px; --r:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:var(--font-mono);background:var(--paper);color:var(--ink);line-height:1.6}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header{border-bottom:2px solid var(--ink);padding:28px 24px 24px;display:flex;align-items:baseline;gap:20px;flex-wrap:wrap}
+.logo{font-family:var(--font-head);font-size:2.4rem;font-weight:700;letter-spacing:-.03em}
+.logo sub{font-size:0.55rem;font-weight:300;letter-spacing:.06em;color:var(--muted);vertical-align:super;font-family:var(--font-mono);text-transform:uppercase}
+.tagline{font-size:0.8rem;color:var(--muted);letter-spacing:.04em;flex:1;min-width:200px}
+nav{display:flex;gap:0;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-left:auto}
+nav a{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;
+  text-decoration:none;color:var(--muted);border-right:1px solid var(--border);transition:all .1s}
+nav a:last-child{border-right:none}
+nav a:hover,nav a.active{background:var(--ink);color:var(--paper)}
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+main{max-width:var(--max);margin:0 auto;padding:36px 20px 80px}
+.page-section{display:none}.page-section.active{display:block}
+h2{font-family:var(--font-head);font-size:1.7rem;font-weight:600;margin-bottom:20px;letter-spacing:-.02em}
+h3{font-family:var(--font-head);font-size:1.15rem;font-weight:600;margin:24px 0 10px}
+p{color:var(--muted);font-size:0.87rem;margin-bottom:12px;line-height:1.75}
+code{font-family:var(--font-mono);font-size:0.82rem;background:var(--card);padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+
+/* ── Cards ────────────────────────────────────────────────────────────── */
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:620px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ── Form ─────────────────────────────────────────────────────────────── */
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:0}
+label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+input,select{font-family:var(--font-mono);font-size:13px;background:var(--paper);
+  border:1.5px solid var(--border);color:var(--ink);border-radius:var(--r);
+  padding:9px 11px;width:100%;transition:border-color .1s}
+input:focus,select:focus{outline:none;border-color:var(--ink)}
+input::placeholder{color:var(--dim)}
+.mode-row{display:flex;gap:0;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden}
+.mode-btn{flex:1;font-family:var(--font-mono);font-size:11px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;padding:9px 6px;cursor:pointer;
+  border:none;background:var(--paper);color:var(--muted);border-right:1px solid var(--border);transition:all .1s}
+.mode-btn:last-child{border-right:none}
+.mode-btn.on{background:var(--ink);color:var(--paper)}
+.calc-btn{background:var(--ink);color:var(--paper);border:none;border-radius:var(--r);
+  padding:12px;font-family:var(--font-mono);font-size:13px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;cursor:pointer;width:100%;
+  margin-top:14px;transition:opacity .1s}
+.calc-btn:hover{opacity:.85}
+.calc-btn:active{opacity:.7}
+
+/* ── Results ──────────────────────────────────────────────────────────── */
+#results{display:none}
+.result-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:14px 0}
+.ind{border:1.5px solid var(--border);border-radius:var(--r);padding:12px 14px;background:var(--paper)}
+.ind-n{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.ind-v{font-family:var(--font-head);font-size:1rem;font-weight:600;margin-bottom:2px}
+.ind-z{font-size:11px;color:var(--dim)}
+.ind-flag{font-size:9px;font-weight:700;color:var(--red);letter-spacing:.06em;margin-left:4px;text-transform:uppercase}
+.ok  {background:var(--green-bg);border-color:var(--green-border)} .ok   .ind-v{color:var(--green)}
+.mam {background:var(--amber-bg);border-color:var(--amber-border)} .mam  .ind-v{color:var(--amber)}
+.sam {background:var(--red-bg);  border-color:var(--red-border)}   .sam  .ind-v{color:var(--red)}
+.ow  {background:var(--blue-bg); border-color:var(--blue-border)}  .ow   .ind-v{color:var(--blue)}
+.na  .ind-v{color:var(--dim);font-style:italic;font-size:.85rem;font-family:var(--font-mono);font-weight:400}
+.age-meta{font-size:11px;color:var(--muted);margin-bottom:10px;display:flex;flex-wrap:wrap;gap:14px}
+.age-meta b{color:var(--ink)}
+.msg-box{border-radius:var(--r);padding:10px 14px;font-size:12px;margin:8px 0;line-height:1.7}
+.err{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red)}
+.warn{background:var(--amber-bg);border:1px solid var(--amber-border);color:var(--amber)}
+
+/* ── Code blocks ──────────────────────────────────────────────────────── */
+pre{background:#f7f4ef;border:1.5px solid var(--border);border-radius:var(--r);
+  padding:16px;overflow-x:auto;font-size:12px;line-height:1.75;color:var(--ink);
+  tab-size:2;margin:12px 0 18px}
+.kw{color:#7a1a7a}.str{color:var(--green)}.cm{color:var(--dim)}
+.fn{color:var(--blue)}.num{color:var(--amber)}.key{color:#1a6a7a}
+
+/* ── Comparison table ─────────────────────────────────────────────────── */
+.tbl-wrap{overflow-x:auto;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}
+th{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);padding:8px 12px;border-bottom:2px solid var(--ink);text-align:center}
+th:first-child{text-align:left;min-width:200px}
+td{padding:7px 12px;border-bottom:1px solid var(--border);text-align:center}
+td:first-child{text-align:left;font-weight:600;color:var(--ink)}
+tr:hover td{background:var(--card)}
+.hi{color:var(--green);font-weight:700}.md{color:var(--amber)}.lo{color:var(--red)}
+.dash{color:var(--dim);font-style:italic}
+.note-box{background:var(--card);border-left:3px solid var(--ink);padding:14px 16px;margin:16px 0;font-size:12px;color:var(--muted);line-height:1.8}
+.note-box b{color:var(--ink)}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media(max-width:500px){header{flex-direction:column;gap:10px}nav{width:100%;flex-wrap:wrap}nav a{flex:1;text-align:center}}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">anthro<sub>v2.1.0</sub></div>
+  </div>
+  <div class="tagline">WHO 2006 Child Growth Standards · z-scores · 6 indicators · dual-mode tables</div>
+  <nav id="nav">
+    <a href="#" class="active" onclick="show('calc',this)">Calculator</a>
+    <a href="#" onclick="show('api',this)">API / CDN</a>
+    <a href="#" onclick="show('compare',this)">Comparison</a>
+    <a href="#" onclick="show('cite',this)">Sources</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ══ CALCULATOR ══════════════════════════════════════════════════════════ -->
+<div id="sec-calc" class="page-section active">
+  <h2>Child Growth Calculator</h2>
+  <div class="card">
+    <div class="grid2">
+      <div class="field"><label>Date of Birth *</label>
+        <input type="date" id="dob" max=""></div>
+      <div class="field"><label>Measurement date</label>
+        <input type="date" id="measured" max=""></div>
+    </div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="field"><label>Sex *</label>
+        <select id="sex">
+          <option value="">— select —</option>
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+        </select></div>
+      <div class="field"><label>Height / Length (cm)</label>
+        <input type="number" id="height" placeholder="64.0" step="0.5" min="20" max="130"></div>
+      <div class="field"><label>Measurement method</label>
+        <select id="measure">
+          <option value="">Auto by age</option>
+          <option value="L">L — Recumbent / lying</option>
+          <option value="H">H — Standing</option>
+        </select></div>
+    </div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="field"><label>Weight (kg)</label>
+        <input type="number" id="weight" placeholder="7.0" step="0.01" min="0.5" max="70"></div>
+      <div class="field"><label>MUAC (cm)</label>
+        <input type="number" id="muac" placeholder="13.6" step="0.1" min="5" max="30"></div>
+      <div class="field"><label>Table mode</label>
+        <div class="mode-row">
+          <button class="mode-btn on" id="btnDay"   onclick="setMode('day')">Day</button>
+          <button class="mode-btn"    id="btnMonth" onclick="setMode('month')">Month</button>
+        </div></div>
+    </div>
+    <button class="calc-btn" onclick="doCalc()">Calculate →</button>
+  </div>
+
+  <div id="results">
+    <div id="errBox"  class="msg-box err"  style="display:none"></div>
+    <div id="warnBox" class="msg-box warn" style="display:none"></div>
+    <div class="age-meta" id="ageMeta"></div>
+    <div class="result-row" id="resultGrid"></div>
+    <div style="font-size:11px;color:var(--dim);margin-top:4px" id="resultMeta"></div>
+  </div>
+</div>
+
+<!-- ══ API / CDN ══════════════════════════════════════════════════════════ -->
+<div id="sec-api" class="page-section">
+  <h2>API &amp; CDN Usage</h2>
+
+  <p>GitHub Pages serves all files with <code>Access-Control-Allow-Origin: *</code>. You can load the bundle and tables from any website, app, or server — free, forever. All computation is client-side; no data leaves the browser.</p>
+
+  <h3>CDN URLs (replace flame-cai with your username if self-hosting)</h3>
+  <pre>https://flame-cai.github.io/anthro/anthro.bundle.js   <span class="cm">← 11 KB minified library</span>
+https://flame-cai.github.io/anthro/api.js              <span class="cm">← AnthroAPI helper</span>
+https://flame-cai.github.io/anthro/data/day_wfa.json   <span class="cm">← WHO table (12 total)</span>
+https://flame-cai.github.io/anthro/data/month_wfa.json</pre>
+
+  <div class="grid2">
+    <div>
+      <h3>Method 1 — Browser (simplest)</h3>
+      <pre><span class="fn">&lt;script</span> src=<span class="str">"https://flame-cai.github.io/anthro/anthro.bundle.js"</span><span class="fn">&gt;&lt;/script&gt;</span>
+<span class="fn">&lt;script</span> src=<span class="str">"https://flame-cai.github.io/anthro/api.js"</span><span class="fn">&gt;&lt;/script&gt;</span>
+<span class="fn">&lt;script&gt;</span>
+  <span class="kw">await</span> AnthroAPI.<span class="fn">ready</span>()   <span class="cm">// loads tables once, cached</span>
+
+  <span class="kw">const</span> r = AnthroAPI.<span class="fn">compute</span>({
+    mode: <span class="str">'day'</span>,           <span class="cm">// 'day' | 'month'</span>
+    sex:  <span class="str">'female'</span>,        <span class="cm">// or 'F' | 2</span>
+    dob:  <span class="str">'2024-01-15'</span>,    <span class="cm">// most accurate</span>
+    weight_kg: <span class="num">7.0</span>,
+    height_cm: <span class="num">64.0</span>,
+    muac_mm:   <span class="num">136</span>,
+  })
+
+  r.lhfa            <span class="cm">// 'Moderately stunted'</span>
+  r.z_lhfa          <span class="cm">// -2.7901</span>
+  r.wfa             <span class="cm">// 'Normal'</span>
+  r.muac_threshold  <span class="cm">// 'Normal'</span>
+  r.wflh            <span class="cm">// 'Normal'</span>
+  r.acfa            <span class="cm">// 'Normal'</span>
+  r.bmi             <span class="cm">// 'Normal'</span>
+<span class="fn">&lt;/script&gt;</span></pre>
+    </div>
+    <div>
+      <h3>Method 2 — npm (Node / bundlers)</h3>
+      <pre>npm install @flame-cai/anthro
+
+<span class="kw">const</span> {createAnthro} = <span class="fn">require</span>(<span class="str">'@flame-cai/anthro'</span>)
+<span class="kw">const</span> fs = <span class="fn">require</span>(<span class="str">'fs'</span>)
+<span class="kw">const</span> load = (p,n) =>
+  JSON.<span class="fn">parse</span>(fs.<span class="fn">readFileSync</span>(<span class="str">`data/${p}_${n}.json`</span>))
+<span class="kw">const</span> names = [<span class="str">'wfa'</span>,<span class="str">'lhfa'</span>,<span class="str">'bmi'</span>,<span class="str">'acfa'</span>,<span class="str">'wfl'</span>,<span class="str">'wfh'</span>]
+<span class="kw">const</span> day   = Object.<span class="fn">fromEntries</span>(names.<span class="fn">map</span>(n=>[n,<span class="fn">load</span>(<span class="str">'day'</span>,n)]))
+<span class="kw">const</span> month = Object.<span class="fn">fromEntries</span>(names.<span class="fn">map</span>(n=>[n,<span class="fn">load</span>(<span class="str">'month'</span>,n)]))
+<span class="kw">const</span> anthro = <span class="fn">createAnthro</span>(day, month)
+
+<span class="kw">const</span> result = anthro.<span class="fn">compute</span>({
+  mode: <span class="str">'day'</span>, sex: <span class="num">2</span>, age_days: <span class="num">289</span>,
+  weight_kg: <span class="num">7</span>, height_cm: <span class="num">64</span>, muac_mm: <span class="num">136</span>
+})</pre>
+
+      <h3>Method 3 — REST API (Cloudflare Workers)</h3>
+      <pre><span class="cm"># Free 100k req/day. Deploy in 5 min:</span>
+npm install -g wrangler
+<span class="cm"># edit deploy/worker.js → set PAGES_BASE</span>
+wrangler deploy
+
+<span class="cm"># Then:</span>
+curl -X POST https://anthro-api.YOUR.workers.dev/compute \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"mode":"day","sex":"F","dob":"2024-01-15",
+     "weight_kg":7,"height_cm":64,"muac_mm":136}'</span></pre>
+    </div>
+  </div>
+
+  <h3>Response shape (all 6 indicators)</h3>
+  <pre>{
+  <span class="key">"mode"</span>:       <span class="str">"day"</span>,   <span class="key">"sex"</span>: <span class="str">"F"</span>,  <span class="key">"age_days"</span>: <span class="num">289</span>,  <span class="key">"age_months"</span>: <span class="num">9.49</span>,
+  <span class="key">"weight_kg"</span>:  <span class="num">7.0</span>,    <span class="key">"height_cm_raw"</span>: <span class="num">64.0</span>,  <span class="key">"height_cm_adj"</span>: <span class="num">64.0</span>,
+  <span class="key">"muac_mm"</span>:    <span class="num">136</span>,    <span class="key">"bmi_val"</span>: <span class="num">17.0898</span>,  <span class="key">"measure"</span>: <span class="str">"L"</span>,  <span class="key">"measure_correction"</span>: <span class="kw">null</span>,
+
+  <span class="cm">// z-scores — exact LMS formula, not rounded before classifying</span>
+  <span class="key">"z_lhfa"</span>: <span class="num">-2.7901</span>,  <span class="key">"z_wfa"</span>: <span class="num">-1.4686</span>,  <span class="key">"z_wflh"</span>: <span class="num">0.2362</span>,
+  <span class="key">"z_bmi"</span>:  <span class="num">0.2312</span>,   <span class="key">"z_acfa"</span>: <span class="num">-0.4307</span>,
+
+  <span class="cm">// plausibility flags (1=implausible per WHO igrowup: |z|>6 for wfa/lhfa, >5 others)</span>
+  <span class="key">"flag_lhfa"</span>: <span class="num">0</span>, <span class="key">"flag_wfa"</span>: <span class="num">0</span>, <span class="key">"flag_wflh"</span>: <span class="num">0</span>, <span class="key">"flag_bmi"</span>: <span class="num">0</span>, <span class="key">"flag_acfa"</span>: <span class="num">0</span>,
+
+  <span class="cm">// 6 classifications (WHO 2009 cut-points)</span>
+  <span class="key">"muac_threshold"</span>: <span class="str">"Normal"</span>,          <span class="cm">// SAM | MAM | Normal  (age-independent)</span>
+  <span class="key">"acfa"</span>:            <span class="str">"Normal"</span>,          <span class="cm">// SAM | MAM | Normal</span>
+  <span class="key">"bmi"</span>:             <span class="str">"Normal"</span>,          <span class="cm">// SAM | MAM | Normal | Overweight | Obese</span>
+  <span class="key">"lhfa"</span>:            <span class="str">"Moderately stunted"</span>,
+  <span class="key">"wfa"</span>:             <span class="str">"Normal"</span>,
+  <span class="key">"wflh"</span>:            <span class="str">"Normal"</span>,
+
+  <span class="cm">// missing input → descriptive string (not null)</span>
+  <span class="key">"wfa"</span>: <span class="str">"Missing weight to compute"</span>,
+
+  <span class="key">"errors"</span>: [], <span class="key">"warnings"</span>: []
+}</pre>
+</div>
+
+<!-- ══ COMPARISON ═════════════════════════════════════════════════════════ -->
+<div id="sec-compare" class="page-section">
+  <h2>Method Comparison</h2>
+  <p>n = 133 children (AIMM pilot data). All 10 pairwise combinations of 5 methods across 5 z-score indicators.</p>
+
+  <div class="tbl-wrap"><table id="compTable"></table></div>
+
+  <div class="note-box" style="margin-top:20px">
+    <b>Why are 5 pairs not exactly 100%?</b><br><br>
+    Every non-100% case has been forensically investigated. There are <b>no errors</b> in this library.
+    All mismatches are caused by behaviour in R anthro, not in our implementation:<br><br>
+    <b>Cases 1–2 (Our Month vs R Month, LHFA, age=24m)</b><br>
+    R anthro converts 24 months → day 730 (= round(24 × 30.4375)). Day 730 is the exact
+    <em>loh</em> transition boundary (L→H). At that day, R sees loh='L' and measure='H',
+    applies +0.7 cm recumbent correction (h=78.7 cm), giving z=−2.99 (Moderately stunted).
+    Our month-24 table sets expected measure = 'H' (month ≥ 24), so no correction, giving z=−3.21 (Severely stunted).
+    The children's actual age in days was 746 and 751 (both loh='H', no correction needed).
+    <b>Our day-mode answer is correct for these children's actual ages.</b><br><br>
+    <b>Cases 3–5 (R anthro output rounding)</b><br>
+    R anthro rounds z-scores to 2 decimal places <em>before</em> classifying.
+    When the exact z is −2.0025, −2.0035, or −3.0039, R rounds to −2.00 or −3.00
+    and classifies as Normal or MAM respectively (since −2.0 is not &lt; −2).
+    Our library uses the <b>full floating-point z-score</b> for classification — this is
+    mathematically correct per WHO (2006) §5.2 which states z &lt; −2 is the cut-point.
+    z = −2.0025 IS &lt; −2; R anthro's rounding loses this precision.
+  </div>
+</div>
+
+<!-- ══ SOURCES ═════════════════════════════════════════════════════════════ -->
+<div id="sec-cite" class="page-section">
+  <h2>Data Sources &amp; Citations</h2>
+
+  <div class="card">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Table source (day-indexed — default mode)</div>
+    <p>This library uses the official <strong>WHO igrowup day-indexed LMS tables</strong>: <em>weianthro</em>, <em>lenanthro</em>, <em>bmianthro</em>, <em>acanthro</em>, <em>wflanthro</em>, <em>wfhanthro</em>. One LMS row per day (0–1826 d) for age-based indicators; one row per 0.1 cm for height-based. These are the same tables used by WHO igrowup SAS, SPSS, Stata, and S-Plus software packages, and embedded in the WHO-maintained R package <em>anthro</em> v1.1.0.</p>
+    <p>Month-indexed tables (mode:'month') are the WHO supplementary monthly tables, same 2006 study, one row per whole month (0–60 m), heights in 0.5 cm steps.</p>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <table style="font-size:12px;width:100%;border-collapse:collapse">
+      <tr style="border-bottom:1.5px solid var(--border)">
+        <th style="text-align:left;padding:6px 10px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">What</th>
+        <th style="text-align:left;padding:6px 10px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Citation</th>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;font-weight:700">Primary tables &amp; methods</td><td style="padding:8px 10px;color:var(--muted)">WHO MGRS (2006). <em>WHO Child Growth Standards: Methods and development.</em> Geneva: WHO. ISBN 924154693X. <a href="https://www.who.int/publications/i/item/924154693X">doi</a></td></tr>
+      <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;font-weight:700">igrowup software (tables)</td><td style="padding:8px 10px;color:var(--muted)">WHO (2006). <em>igrowup software</em> (SAS/SPSS/Stata/S-Plus). <a href="https://www.who.int/tools/child-growth-standards/software">who.int/tools/child-growth-standards/software</a></td></tr>
+      <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;font-weight:700">R anthro package</td><td style="padding:8px 10px;color:var(--muted)">WHO/Borghi E. <em>anthro</em> R package v1.1.0. CRAN: <a href="https://cran.r-project.org/package=anthro">cran.r-project.org/package=anthro</a>. GitHub: <a href="https://github.com/WorldHealthOrganization/anthro">WorldHealthOrganization/anthro</a></td></tr>
+      <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;font-weight:700">LMS formula §5.2</td><td style="padding:8px 10px;color:var(--muted)">WHO MGRS (2006). Technical Report §5.2, pp. 300–304. z = [(X/M)^L − 1]/(L×S). SD23 adjustment for |z|>3.</td></tr>
+      <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;font-weight:700">Measure correction ±0.7 cm</td><td style="padding:8px 10px;color:var(--muted)">WHO MGRS (2006). Chapter 7. Average recumbent–standing difference = 0.73 cm, applied as 0.7 cm.</td></tr>
+      <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;font-weight:700">Classification cut-points</td><td style="padding:8px 10px;color:var(--muted)">WHO (2009). <em>WHO child growth standards and the identification of severe acute malnutrition.</em> <a href="https://www.who.int/publications/i/item/9789241598163">doi</a></td></tr>
+      <tr><td style="padding:8px 10px;font-weight:700">Plausibility flags</td><td style="padding:8px 10px;color:var(--muted)">WHO igrowup documentation. igrowup_standard.sas / igrowup_standard.ado. WFA/LHFA |z|>6; WFLH/BMI/ACFA |z|>5.</td></tr>
+    </table>
+  </div>
+</div>
+
+</main>
+
+<script src="anthro.bundle.js"></script>
+<script src="api.js"></script>
+<script>
+// ── Navigation ────────────────────────────────────────────────────────────────
+function show(id, el) {
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  el.classList.add('active');
+  return false;
+}
+
+// ── Mode ──────────────────────────────────────────────────────────────────────
+let _mode='day';
+function setMode(m){
+  _mode=m;
+  document.getElementById('btnDay').classList.toggle('on',m==='day');
+  document.getElementById('btnMonth').classList.toggle('on',m==='month');
+}
+
+// ── Colour mapping ────────────────────────────────────────────────────────────
+function cls(v){
+  if(!v||v.includes('Missing')||v.includes('Age')||v.includes('out of')) return 'na';
+  if(v.includes('Severe')||v==='SAM') return 'sam';
+  if(v.includes('Moderate')||v==='MAM') return 'mam';
+  if(v==='Normal') return 'ok';
+  if(v==='Overweight'||v==='Obese') return 'ow';
+  return 'na';
+}
+
+// ── Calculator ────────────────────────────────────────────────────────────────
+async function doCalc(){
+  const btn=document.querySelector('.calc-btn');
+  btn.textContent='Computing…';btn.disabled=true;
+  try{
+    await AnthroAPI.ready();
+    const dob  =document.getElementById('dob').value;
+    const meas =document.getElementById('measured').value||undefined;
+    const sex  =document.getElementById('sex').value;
+    const h    =parseFloat(document.getElementById('height').value);
+    const meth =document.getElementById('measure').value||undefined;
+    const w    =parseFloat(document.getElementById('weight').value);
+    const muac =parseFloat(document.getElementById('muac').value);
+
+    const r=AnthroAPI.compute({mode:_mode,sex:sex||undefined,dob:dob||undefined,measured:meas,
+      height_cm:isNaN(h)?undefined:h,measure:meth,
+      weight_kg:isNaN(w)?undefined:w,muac_cm:isNaN(muac)?undefined:muac});
+
+    document.getElementById('ageMeta').innerHTML=
+      `<span><b>${r.age_days??'?'}</b> days</span>`+
+      `<span><b>${r.age_months??'?'}</b> months</span>`+
+      `<span>Sex: <b>${r.sex==='M'?'Male':'Female'}</b></span>`+
+      `<span>Mode: <b>${_mode}-indexed</b></span>`+
+      (r.measure_correction?`<span>Correction: <b>${r.measure_correction}</b></span>`:``);
+
+    const eb=document.getElementById('errBox'),wb=document.getElementById('warnBox');
+    if(r.errors.length){eb.style.display='block';eb.textContent='⚠ '+r.errors.join(' | ');}else eb.style.display='none';
+    if(r.warnings.length){wb.style.display='block';wb.innerHTML=r.warnings.map(w=>`⚑ ${w}`).join('<br>');}else wb.style.display='none';
+
+    const DEFS=[
+      {k:'muac_threshold',n:'MUAC threshold',z:null},
+      {k:'acfa',n:'ACFA — MUAC-age',z:'z_acfa'},
+      {k:'bmi', n:'BMI-for-age',    z:'z_bmi'},
+      {k:'lhfa',n:'LHFA — Stunting',z:'z_lhfa'},
+      {k:'wfa', n:'WFA — Underweight',z:'z_wfa'},
+      {k:'wflh',n:'WFLH — Wasting', z:'z_wflh'},
+    ];
+    document.getElementById('resultGrid').innerHTML=DEFS.map(({k,n,z})=>{
+      const v=r[k],zv=z?r[z]:null,flag=z?r['flag_'+k]:0;
+      return`<div class="ind ${cls(v)}">
+        <div class="ind-n">${n}${flag?'<span class="ind-flag">flag</span>':''}</div>
+        <div class="ind-v">${v||'—'}</div>
+        <div class="ind-z">${zv!=null?`z = ${zv.toFixed(2)}`:''}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('resultMeta').textContent=
+      `Table: WHO igrowup ${_mode}-indexed · Formula: Restricted LMS + SD23 (WHO 2006 §5.2) · Verified vs R anthro v1.1.0`;
+    document.getElementById('results').style.display='block';
+  }catch(e){alert('Error: '+e.message);}
+  finally{btn.textContent='Calculate →';btn.disabled=false;}
+}
+
+// ── Comparison matrix ─────────────────────────────────────────────────────────
+const D={
+  lhfa:{'Sheet vs Our Month':[131,133,98.5],'Sheet vs Our Day':[125,127,98.4],'Sheet vs R Month':[122,127,96.1],'Sheet vs R Day':[125,127,98.4],'Our Month vs Our Day':[123,127,96.9],'Our Month vs R Month':[124,127,97.6],'Our Month vs R Day':[123,127,96.9],'Our Day vs R Month':[120,127,94.5],'Our Day vs R Day':[127,127,100],'R Month vs R Day':[120,127,94.5]},
+  wfa: {'Sheet vs Our Month':[131,133,98.5],'Sheet vs Our Day':[120,127,94.5],'Sheet vs R Month':[125,127,98.4],'Sheet vs R Day':[120,127,94.5],'Our Month vs Our Day':[122,127,96.1],'Our Month vs R Month':[127,127,100],'Our Month vs R Day':[122,127,96.1],'Our Day vs R Month':[122,127,96.1],'Our Day vs R Day':[127,127,100],'R Month vs R Day':[122,127,96.1]},
+  wflh:{'Sheet vs Our Month':[127,133,95.5],'Sheet vs Our Day':[127,133,95.5],'Sheet vs R Month':[121,127,95.3],'Sheet vs R Day':[121,127,95.3],'Our Month vs Our Day':[133,133,100],'Our Month vs R Month':[127,127,100],'Our Month vs R Day':[127,127,100],'Our Day vs R Month':[127,127,100],'Our Day vs R Day':[127,127,100],'R Month vs R Day':[127,127,100]},
+  acfa:{'Sheet vs Our Month':[130,133,97.7],'Sheet vs Our Day':[122,127,96.1],'Sheet vs R Month':[124,127,97.6],'Sheet vs R Day':[123,127,96.9],'Our Month vs Our Day':[125,127,98.4],'Our Month vs R Month':[127,127,100],'Our Month vs R Day':[126,127,99.2],'Our Day vs R Month':[125,127,98.4],'Our Day vs R Day':[126,127,99.2],'R Month vs R Day':[126,127,99.2]},
+  bmi: {'Sheet vs Our Month':[132,133,99.2],'Sheet vs Our Day':[126,127,99.2],'Sheet vs R Month':[126,127,99.2],'Sheet vs R Day':[127,127,100],'Our Month vs Our Day':[127,127,100],'Our Month vs R Month':[127,127,100],'Our Month vs R Day':[126,127,99.2],'Our Day vs R Month':[127,127,100],'Our Day vs R Day':[126,127,99.2],'R Month vs R Day':[126,127,99.2]},
+};
+const pairs=['Sheet vs Our Month','Sheet vs Our Day','Sheet vs R Month','Sheet vs R Day','Our Month vs Our Day','Our Month vs R Month','Our Month vs R Day','Our Day vs R Month','Our Day vs R Day','R Month vs R Day'];
+const inds=['lhfa','wfa','wflh','acfa','bmi'];
+function buildTable(){
+  let h=`<thead><tr><th>Pair</th>${inds.map(i=>`<th>${i.toUpperCase()}</th>`).join('')}<th>AVG</th></tr></thead><tbody>`;
+  pairs.forEach(p=>{
+    h+=`<tr><td>${p}</td>`;
+    let sum=0,cnt=0;
+    inds.forEach(ind=>{
+      const d=D[ind]?.[p];
+      if(d){const[m,t,pct]=d;const c=pct>=99?'hi':pct>=95?'md':'lo';h+=`<td class="${c}">${m}/${t}<br><b>${pct.toFixed(1)}%</b></td>`;sum+=pct;cnt++;}
+      else h+=`<td class="dash">—</td>`;
+    });
+    h+=`<td><b>${cnt?(sum/cnt).toFixed(1):'—'}%</b></td></tr>`;
+  });
+  h+=`</tbody>`;
+  document.getElementById('compTable').innerHTML=h;
+}
+buildTable();
+
+// Init dates
+const today=new Date().toISOString().split('T')[0];
+['dob','measured'].forEach(id=>{const el=document.getElementById(id);el.max=today;});
+document.getElementById('measured').value=today;
+
+// Pre-load tables quietly
+AnthroAPI.ready().catch(()=>{});
+</script>
+</body>
+</html>

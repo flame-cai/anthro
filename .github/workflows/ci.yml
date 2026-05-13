@@ -1,0 +1,77 @@
+name: CI / CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── 1. Test ──────────────────────────────────────────────────────────────────
+  test:
+    name: Tests — Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['18', '20', '22']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ matrix.node }}' }
+      - run: node test/anthro.test.js
+
+  # ── 2. Build docs (bundle + copy tables) ────────────────────────────────────
+  build:
+    name: Build GitHub Pages
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Install esbuild
+        run: npm install -g esbuild
+      - name: Bundle library (11 KB minified)
+        run: |
+          esbuild src/anthro.js \
+            --bundle --format=iife --global-name=anthro \
+            --outfile=docs/anthro.bundle.js --minify
+      - name: Copy WHO tables to docs
+        run: mkdir -p docs/data && cp data/*.json docs/data/
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with: { path: docs/ }
+
+  # ── 3. Deploy to GitHub Pages ────────────────────────────────────────────────
+  deploy:
+    name: Deploy — flame-cai.github.io/anthro
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+  # ── 4. Publish to npm (on version tag) ──────────────────────────────────────
+  publish:
+    name: npm publish @flame-cai/anthro
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Publish
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
