@@ -1,6 +1,6 @@
 /**
  * @module anthro
- * @version 2.1.0
+ * @version 1.0.0
  * @license MIT
  * @repo https://github.com/flame-cai/anthro
  *

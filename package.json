@@ -1,6 +1,6 @@
 {
   "name": "@flame-cai/anthro",
-  "version": "2.1.0",
+  "version": "1.0.0",
   "description": "WHO 2006 Child Growth Standards — z-scores & classifications. Dual-mode: day-indexed (WHO igrowup) and month-indexed tables.",
   "main": "src/anthro.js",
   "types": "src/anthro.d.ts",
@@ -13,7 +13,7 @@
     "dev":   "npx serve docs"
   },
   "engines": { "node": ">=14" },
-  "devDependencies": { "esbuild": "^0.20.0" },
+  "devDependencies": { "esbuild": "^0.24.0" },
   "repository": { "type": "git", "url": "https://github.com/flame-cai/anthro.git" },
   "homepage": "https://flame-cai.github.io/anthro",
   "bugs": { "url": "https://github.com/flame-cai/anthro/issues" }
