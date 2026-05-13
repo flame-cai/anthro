@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://flame-cai.github.io/anthro/sitemap.xml

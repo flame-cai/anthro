@@ -1,0 +1,14 @@
+/* TEAM */
+Project: anthro
+Github: https://github.com/flame-cai/anthro
+
+/* THANKS */
+WHO Multicentre Growth Reference Study Group (2006)
+R anthro package maintainers — WorldHealthOrganization/anthro
+
+/* TECHNOLOGY */
+JavaScript (vanilla, no framework)
+WHO igrowup LMS tables (weianthro, lenanthro, bmianthro, acanthro, wflanthro, wfhanthro)
+esbuild (bundler)
+GitHub Pages (hosting)
+GitHub Actions (CI/CD)

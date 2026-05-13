@@ -1,5 +1,5 @@
 /**
- * anthro GitHub Pages API v1.0.0
+ * anthro GitHub Pages API v2.1.0
  * 
  * Exposes window.AnthroAPI with methods:
  *   AnthroAPI.ready()     → Promise<void>

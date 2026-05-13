@@ -1,20 +1,49 @@
 {
   "name": "@flame-cai/anthro",
   "version": "1.0.0",
-  "description": "WHO 2006 Child Growth Standards — z-scores & classifications. Dual-mode: day-indexed (WHO igrowup) and month-indexed tables.",
+  "description": "WHO 2006 Child Growth Standards \u2014 z-scores & classifications. Dual-mode: day-indexed (WHO igrowup) and month-indexed tables.",
   "main": "src/anthro.js",
   "types": "src/anthro.d.ts",
-  "files": ["src/", "data/", "README.md", "LICENSE", "CHANGELOG.md"],
-  "keywords": ["who","child-growth","anthropometry","z-score","stunting","wasting","underweight","muac","lhfa","wfa","wflh","bmi","acfa","igrowup"],
-  "license": "MIT",
+  "files": [
+    "src/",
+    "data/",
+    "README.md",
+    "CONTRIBUTING.md"
+  ],
+  "keywords": [
+    "who",
+    "child-growth",
+    "anthropometry",
+    "z-score",
+    "stunting",
+    "wasting",
+    "underweight",
+    "muac",
+    "lhfa",
+    "wfa",
+    "wflh",
+    "bmi",
+    "acfa",
+    "igrowup"
+  ],
   "scripts": {
-    "test":  "node test/anthro.test.js",
+    "test": "node test/anthro.test.js",
     "build": "esbuild src/anthro.js --bundle --format=iife --global-name=anthro --outfile=docs/anthro.bundle.js --minify && cp data/*.json docs/data/",
-    "dev":   "npx serve docs"
+    "dev": "npx serve docs",
+    "prepare": "husky"
   },
-  "engines": { "node": ">=14" },
-  "devDependencies": { "esbuild": "^0.24.0" },
-  "repository": { "type": "git", "url": "https://github.com/flame-cai/anthro.git" },
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flame-cai/anthro.git"
+  },
   "homepage": "https://flame-cai.github.io/anthro",
-  "bugs": { "url": "https://github.com/flame-cai/anthro/issues" }
+  "bugs": {
+    "url": "https://github.com/flame-cai/anthro/issues"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
 }
