@@ -157,36 +157,41 @@ input[data-datepicker]{cursor:pointer}
 .ae{background:var(--rd2);border-color:var(--rd3);color:var(--rd)}
 .aw{background:var(--am2);border-color:var(--am3);color:var(--am)}
 /* ── RESULTS ──────────────────────────────────────────────────────────── */
-/* summary bar */
-.sum-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-  gap:.5rem;margin-bottom:1rem}
-.sum-item{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);
-  padding:.55rem .75rem;text-align:center}
-.sum-label{font-size:.65rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.06em;color:var(--txd);margin-bottom:.15rem}
-.sum-val{font-size:.92rem;font-weight:700;color:var(--tx)}
-/* indicator rows */
-.ind-table{width:100%;border-collapse:collapse}
-.ind-table th{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
-  color:var(--txd);padding:.4rem .75rem;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
-.ind-table th:last-child{text-align:right}
-.ind-table td{padding:.55rem .75rem;border-bottom:1px solid var(--bd2);vertical-align:middle}
-.ind-table tr:last-child td{border-bottom:none}
-.ind-table tr:hover td{background:var(--bg2)}
-.ind-name{font-size:.85rem;font-weight:600;color:var(--tx)}
-.ind-desc{font-size:.72rem;color:var(--txd)}
+/* meta strip */
+.rmeta{font-size:.8rem;color:var(--tx2);display:flex;flex-wrap:wrap;gap:.75rem 1.25rem;
+  padding:.65rem 0;border-bottom:1px solid var(--bd2);margin-bottom:1rem;line-height:1.4}
+.rmeta b{color:var(--tx);font-weight:600}
+/* indicator table */
+.ind-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.ind-table colgroup .col-ind{width:auto}
+.ind-table colgroup .col-z{width:100px}
+.ind-table colgroup .col-cl{width:170px}
+.ind-table th{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--txd);padding:.45rem .8rem;border-bottom:2px solid var(--bd);text-align:left;white-space:nowrap}
+.ind-table th.th-r{text-align:right}
+.ind-table td{padding:.6rem .8rem;border-bottom:1px solid var(--bd2);vertical-align:middle;word-break:break-word}
+.ind-table tbody tr:last-child td{border-bottom:none}
+.ind-table tbody tr:hover td{background:var(--bg2)}
+.ind-group{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--txd);background:var(--bg3)!important;padding:.3rem .8rem!important;
+  border-bottom:1px solid var(--bd2)!important}
+.ind-group td{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--txd);background:var(--bg3);padding:.3rem .8rem;border-bottom:1px solid var(--bd2)}
+.ind-name{font-size:.85rem;font-weight:600;color:var(--tx);line-height:1.2}
+.ind-sub{font-size:.7rem;color:var(--txd);margin-top:.1rem}
 .ind-z{font-size:.82rem;font-family:"SFMono-Regular",Consolas,monospace;
   font-variant-numeric:tabular-nums;color:var(--tx2)}
-.ind-class{display:inline-flex;align-items:center;gap:.3rem;
-  font-size:.8rem;font-weight:700;padding:.2rem .55rem;
-  border-radius:20px;border:1px solid;white-space:nowrap}
+.ind-class{display:inline-flex;align-items:center;
+  font-size:.78rem;font-weight:700;padding:.18rem .55rem;
+  border-radius:20px;border:1px solid;white-space:nowrap;float:right}
 .c-ok {background:var(--gn2);border-color:var(--gn3);color:var(--gn)}
 .c-mod{background:var(--am2);border-color:var(--am3);color:var(--am)}
 .c-sev{background:var(--rd2);border-color:var(--rd3);color:var(--rd)}
 .c-ow {background:var(--bl2);border-color:var(--bl3);color:var(--bl)}
-.c-na {background:var(--bg3);border-color:var(--bd);color:var(--txd);font-weight:400;font-style:italic}
-.ind-flag{font-size:.62rem;font-weight:700;
-  background:var(--rd2);color:var(--rd);padding:1px 5px;border-radius:3px;margin-left:.3rem}
+.c-na {background:var(--bg3);border-color:var(--bd2);color:var(--txd);font-weight:400;font-style:italic}
+.ind-flag{font-size:.6rem;font-weight:700;letter-spacing:.04em;
+  background:var(--rd2);color:var(--rd);padding:1px 5px;border-radius:3px;
+  margin-left:.4rem;vertical-align:middle}
 /* code */
 pre,code{font-family:"SFMono-Regular",Consolas,monospace;font-size:.8rem}
 code{background:var(--bg2);border:1px solid var(--bd2);padding:1px 4px;border-radius:3px}
@@ -341,6 +346,7 @@ details[open]>summary{color:var(--tx);margin-bottom:.4rem}
         </div>
       </div>
 
+      <hr style="border-color:var(--bd2);margin:.25rem 0 .75rem">
       <div class="g3" style="margin-bottom:.75rem">
         <div class="field">
           <label for="ht">Height / Length (cm)</label>
@@ -365,6 +371,7 @@ details[open]>summary{color:var(--tx);margin-bottom:.4rem}
         </div>
       </div>
 
+      <hr style="border-color:var(--bd2);margin:.25rem 0 .75rem">
       <div class="field" style="margin-bottom:.75rem">
         <label>Table mode</label>
         <div class="seg" role="group" aria-label="Table mode">
@@ -387,38 +394,44 @@ details[open]>summary{color:var(--tx);margin-bottom:.4rem}
     <div id="rerr"></div>
     <div id="rwarn"></div>
 
-    <!-- patient summary -->
-    <div class="sum-bar" id="sumbar"></div>
+    <div class="rmeta" id="rmeta"></div>
 
-    <!-- indicator results table -->
-    <div class="tw" style="margin-top:.75rem">
+    <div class="tw">
       <table class="ind-table">
+        <colgroup>
+          <col class="col-ind"><col class="col-z"><col class="col-cl">
+        </colgroup>
         <thead>
           <tr>
             <th>Indicator</th>
             <th>z-score</th>
-            <th style="text-align:right">Classification</th>
+            <th class="th-r">Classification</th>
           </tr>
         </thead>
         <tbody id="ind-tbody"></tbody>
       </table>
     </div>
 
-    <details style="margin-top:.75rem">
-      <summary>Full JSON output</summary>
-      <pre id="rraw" style="font-size:.7rem;max-height:300px;overflow-y:auto;margin-top:.4rem"></pre>
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem;align-items:center">
+      <button class="btn btn-ghost btn-sm" onclick="dlReport()">↓ Download report (JSON)</button>
+      <button class="btn btn-ghost btn-sm" onclick="dlReportCSV()">↓ Download report (CSV)</button>
+    </div>
+
+    <details style="margin-top:.6rem">
+      <summary>Raw JSON output</summary>
+      <pre id="rraw" style="font-size:.7rem;max-height:280px;overflow-y:auto;margin-top:.4rem"></pre>
     </details>
 
-    <p style="font-size:.68rem;color:var(--txd);margin-top:.6rem" id="rsrc"></p>
+    <p style="font-size:.65rem;color:var(--txd);margin-top:.5rem" id="rsrc"></p>
   </div>
 
-  <!-- placeholder when no results yet -->
   <div id="results-placeholder"
-    style="height:100%;min-height:300px;display:flex;align-items:center;justify-content:center;
-    border:1px dashed var(--bd);border-radius:var(--rl);color:var(--txd);font-size:.85rem;text-align:center;padding:2rem">
-    Enter measurements and click Calculate
+    style="min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    border:1px dashed var(--bd2);border-radius:var(--rl);color:var(--txd);
+    font-size:.85rem;text-align:center;padding:2rem;gap:.5rem;line-height:1.6">
+    <span style="font-size:1.5rem">⚕</span>
+    Results will appear here after calculating
   </div>
-</div>
 
 </div><!-- grid -->
 </div>
@@ -463,8 +476,8 @@ details[open]>summary{color:var(--tx);margin-bottom:.4rem}
       <div class="field" style="justify-content:flex-end">
         <label>&nbsp;</label>
         <div style="display:flex;gap:.4rem;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="dlCurrent()">↓ This table</button>
-          <button class="btn btn-ghost btn-sm" onclick="dlAll()">↓ All 12 tables</button>
+          <button class="btn btn-ghost btn-sm" onclick="dlCurrent()">↓ Download table (JSON)</button>
+          <button class="btn btn-ghost btn-sm" onclick="dlAll()">↓ Download all tables (12 JSON files)</button>
         </div>
       </div>
     </div>
@@ -990,60 +1003,61 @@ async function doCalc() {
     document.getElementById('rwarn').innerHTML = r.warnings.length
       ? `<div class="alert aw"><span>⚑</span><div>${r.warnings.join('<br>')}</div></div>` : '';
 
-    // summary bar
-    const sumItems = [];
+    // input summary strip
+    const meta = [];
     if (r.age_days != null) {
-      const dob_str = document.getElementById('dob').value;
-      sumItems.push({l:'Date of birth', v: dob_str || '—'});
-      sumItems.push({l:'Age', v:`${r.age_days}d (${r.age_months}m)`});
+      meta.push(`DOB: <b>${document.getElementById('dob').value}</b>`);
+      meta.push(`Age: <b>${r.age_days}d</b> (${r.age_months}m)`);
     }
-    if (r.sex)        sumItems.push({l:'Sex',    v: r.sex==='M'?'Male':'Female'});
-    if (r.weight_kg)  sumItems.push({l:'Weight', v:`${r.weight_kg} kg`});
+    if (r.sex)         meta.push(`Sex: <b>${r.sex==='M'?'Male':'Female'}</b>`);
+    if (r.weight_kg)   meta.push(`Weight: <b>${r.weight_kg} kg</b>`);
     if (r.height_cm_raw) {
-      const hStr = r.height_cm_adj !== r.height_cm_raw
-        ? `${r.height_cm_raw} cm (adj. ${r.height_cm_adj} cm)`
-        : `${r.height_cm_raw} cm`;
-      sumItems.push({l:'Height', v: hStr});
+      const adj = r.measure_correction
+        ? ` <span title="${r.measure_correction}" style="color:var(--am);cursor:help">(adj. ${r.height_cm_adj} cm*)</span>`
+        : '';
+      meta.push(`Height: <b>${r.height_cm_raw} cm</b>${adj}`);
     }
-    if (r.muac_mm)   sumItems.push({l:'MUAC',   v:`${r.muac_mm} mm`});
-    if (r.bmi_val)   sumItems.push({l:'BMI',    v:`${r.bmi_val} kg/m²`});
-    sumItems.push({l:'Mode', v:`${r.mode}-indexed`});
+    if (r.muac_mm)     meta.push(`MUAC: <b>${r.muac_mm} mm</b>`);
+    if (r.bmi_val)     meta.push(`BMI: <b>${r.bmi_val} kg/m²</b>`);
+    meta.push(`Mode: <b>${r.mode}-indexed</b>`);
+    document.getElementById('rmeta').innerHTML = meta.join('');
 
-    document.getElementById('sumbar').innerHTML = sumItems
-      .map(x => `<div class="sum-item"><div class="sum-label">${x.l}</div><div class="sum-val">${x.v}</div></div>`)
-      .join('');
-
-    // indicators — ordered by clinical relevance (wasting → stunting → underweight → MUAC → BMI → ACFA)
-    const INDS = [
-      {k:'wflh',           lbl:'Weight-for-length/height',    long:'Wasting',    z:'z_wflh'},
-      {k:'lhfa',           lbl:'Length/height-for-age',        long:'Stunting',    z:'z_lhfa'},
-      {k:'wfa',            lbl:'Weight-for-age',               long:'Underweight', z:'z_wfa'},
-      {k:'muac_threshold', lbl:'MUAC (absolute)',              long:'',            z:null},
-      {k:'bmi',            lbl:'BMI-for-age',                  long:'',            z:'z_bmi'},
-      {k:'acfa',           lbl:'MUAC-for-age',                 long:'',            z:'z_acfa'},
+    // indicator table — grouped by clinical domain
+    const GROUPS = [
+      { label: 'Acute malnutrition', rows: [
+          { k:'wflh',           lbl:'Weight-for-length/height', sub:'Wasting',                    z:'z_wflh' },
+          { k:'muac_threshold', lbl:'MUAC (absolute)',          sub:'Age-independent screening',   z:null     },
+      ]},
+      { label: 'Chronic malnutrition', rows: [
+          { k:'lhfa', lbl:'Length/height-for-age', sub:'Stunting', z:'z_lhfa' },
+      ]},
+      { label: 'Other indicators', rows: [
+          { k:'wfa',  lbl:'Weight-for-age',  sub:'Underweight', z:'z_wfa'  },
+          { k:'bmi',  lbl:'BMI-for-age',     sub:'',            z:'z_bmi'  },
+          { k:'acfa', lbl:'MUAC-for-age',    sub:'Ages 3–60 m', z:'z_acfa' },
+      ]},
     ];
 
-    document.getElementById('ind-tbody').innerHTML = INDS.map(({k,lbl,long,z}) => {
-      const v    = r[k];
-      const zv   = z ? r[z] : null;
-      const flag = z ? r['flag_'+k] : 0;
-      const tag  = classTag(v);
-      const cls  = tag === 'c-na' ? 'c-na' : tag;
+    let rows = '';
+    for (const {label, rows: inds} of GROUPS) {
+      rows += `<tr><td colspan="3" class="ind-group">${label}</td></tr>`;
+      for (const {k, lbl, sub, z} of inds) {
+        const v    = r[k];
+        const zv   = z ? r[z] : null;
+        const flag = z ? r['flag_'+k] : 0;
+        rows += `<tr>
+          <td>
+            <div class="ind-name">${lbl}${flag ? ' <span class="ind-flag">FLAG</span>' : ''}</div>
+            ${sub ? `<div class="ind-sub">${sub}</div>` : ''}
+          </td>
+          <td class="ind-z">${zv != null ? zv.toFixed(4) : '—'}</td>
+          <td><span class="ind-class ${classTag(v)}">${v || '—'}</span></td>
+        </tr>`;
+      }
+    }
+    document.getElementById('ind-tbody').innerHTML = rows;
 
-      return `<tr>
-        <td>
-          <div class="ind-name">${lbl}${long ? ` <span class="dim" style="font-weight:400;font-size:.75rem">— ${long}</span>` : ''}</div>
-        </td>
-        <td>
-          <span class="ind-z">${zv != null ? zv.toFixed(4) : '—'}</span>
-          ${flag ? '<span class="ind-flag">FLAG</span>' : ''}
-        </td>
-        <td style="text-align:right">
-          <span class="ind-class ${cls}">${v || '—'}</span>
-        </td>
-      </tr>`;
-    }).join('');
-
+    window._lastResult = r;
     document.getElementById('rraw').textContent = JSON.stringify(r, null, 2);
     document.getElementById('rsrc').textContent =
       `WHO igrowup ${r.mode}-indexed · Restricted LMS + SD23 (WHO 2006 §5.2) · Verified vs R anthro v1.1.0`;
@@ -1061,6 +1075,57 @@ async function doCalc() {
     document.getElementById('cbtn-txt').textContent = 'Calculate';
     btn.disabled = false;
   }
+}
+
+// ── report download ──────────────────────────────────────────────────────
+function dlReport() {
+  const r = window._lastResult;
+  if (!r) return;
+  Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([JSON.stringify(r, null, 2)], {type:'application/json'})),
+    download: `anthro_report_${r.sex||'unknown'}_${r.age_days||'noage'}d.json`
+  }).click();
+}
+
+function dlReportCSV() {
+  const r = window._lastResult;
+  if (!r) return;
+  const dob_val = document.getElementById('dob').value;
+  const FIELDS = [
+    ['dob', dob_val],
+    ['sex', r.sex],
+    ['age_days', r.age_days],
+    ['age_months', r.age_months],
+    ['weight_kg', r.weight_kg],
+    ['height_cm_raw', r.height_cm_raw],
+    ['height_cm_adj', r.height_cm_adj],
+    ['muac_mm', r.muac_mm],
+    ['bmi_val', r.bmi_val],
+    ['mode', r.mode],
+    ['measure', r.measure],
+    ['measure_correction', r.measure_correction],
+    ['z_wflh', r.z_wflh], ['wflh', r.wflh],
+    ['z_lhfa', r.z_lhfa], ['lhfa', r.lhfa],
+    ['z_wfa', r.z_wfa],   ['wfa', r.wfa],
+    ['z_bmi', r.z_bmi],   ['bmi', r.bmi],
+    ['z_acfa', r.z_acfa], ['acfa', r.acfa],
+    ['muac_threshold', r.muac_threshold],
+    ['flag_wflh', r.flag_wflh], ['flag_lhfa', r.flag_lhfa],
+    ['flag_wfa', r.flag_wfa],   ['flag_bmi', r.flag_bmi], ['flag_acfa', r.flag_acfa],
+    ['errors', (r.errors||[]).join('; ')],
+    ['warnings', (r.warnings||[]).join('; ')],
+  ];
+  const header = FIELDS.map(f => f[0]).join(',');
+  const row    = FIELDS.map(f => {
+    const v = f[1] == null ? '' : String(f[1]);
+    return v.includes(',') || v.includes('"') || v.includes('
+') ? `"${v.replace(/"/g,'""')}"` : v;
+  }).join(',');
+  Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([header+'
+'+row], {type:'text/csv'})),
+    download: `anthro_report_${r.sex||'unknown'}_${r.age_days||'noage'}d.csv`
+  }).click();
 }
 
 // ── WHO tables ────────────────────────────────────────────────────────────
