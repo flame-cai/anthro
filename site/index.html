@@ -749,8 +749,12 @@ SD23 adjustment when |z| > 3:
 
       <section id="contributing">
         <h2>Contributing</h2>
-        <p>To run tests: <code>node test/anthro.test.js</code> — no test framework, no dependencies.</p>
-        <p>The site deploys automatically via CI on every push to <code>main</code>. GitHub Pages setup: Settings → Pages → Source: <strong>GitHub Actions</strong>.</p>
+        <p>To run tests: <code>node test/anthro.test.js</code> — no test framework, no extra dependencies.</p>
+        <p>To build and deploy the site locally:</p>
+<pre><code>npm install
+npm run build    # builds _site/ from src/ + data/ + site/
+npm run deploy   # builds then pushes to gh-pages branch</code></pre>
+        <p>CI runs the same steps automatically on every push to <code>main</code>.</p>
         <p>Full details: <a href="https://github.com/flame-cai/anthro/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">CONTRIBUTING.md</a><br>
         Issues: <a href="https://github.com/flame-cai/anthro/issues" target="_blank" rel="noopener">github.com/flame-cai/anthro/issues</a><br>
         Repository: <a href="https://github.com/flame-cai/anthro" target="_blank" rel="noopener">github.com/flame-cai/anthro</a></p>

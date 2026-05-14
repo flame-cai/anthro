@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-# One run at a time per branch — prevents duplicate artifact uploads
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -15,7 +14,6 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  # ── 1. Test ──────────────────────────────────────────────────────────────────
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -25,35 +23,9 @@ jobs:
         with: { node-version: '24' }
       - run: node test/anthro.test.js
 
-  # ── 2. Build + upload Pages artifact ────────────────────────────────────────
-  build:
-    name: Build GitHub Pages
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with: { node-version: '24' }
-      - run: npm install -g esbuild
-      - name: Bundle
-        run: |
-          esbuild src/anthro.js \
-            --bundle --format=iife --global-name=anthro \
-            --outfile=docs/anthro.bundle.js --minify
-      - name: Copy tables
-        run: mkdir -p docs/data && cp data/*.json docs/data/
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: docs/ }
-
-  # ── 3. Deploy ────────────────────────────────────────────────────────────────
   deploy:
-    name: Deploy → flame-cai.github.io/anthro
-    needs: build
+    name: Build and deploy to GitHub Pages
+    needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
@@ -63,12 +35,28 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - id: deploy
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with: { node-version: '24' }
+      - name: Install esbuild
+        run: npm install -g esbuild
+      - name: Build
+        run: |
+          mkdir -p docs/data
+          esbuild src/anthro.js \
+            --bundle --format=iife --global-name=anthro \
+            --outfile=docs/anthro.bundle.js --minify
+          cp data/*.json docs/data/
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+      - name: Deploy
+        id: deploy
         uses: actions/deploy-pages@v4
 
-  # ── 4. Publish to npm on version tag ────────────────────────────────────────
   # publish:
-  #   name: Publish @flame-cai/anthro
+  #   name: Publish to npm
   #   needs: test
   #   runs-on: ubuntu-latest
   #   if: startsWith(github.ref, 'refs/tags/v')

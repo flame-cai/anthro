@@ -75,4 +75,4 @@ Source: WHO MGRS (2006). ISBN 924154693X. https://www.who.int/publications/i/ite
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). To run tests: `node test/anthro.test.js`

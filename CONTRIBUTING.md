@@ -2,16 +2,15 @@
 
 All contributions are welcome.
 
-## Repository structure
+## Structure
 
 ```
 src/anthro.js          core library (UMD — Node.js, browser, React Native)
 src/anthro.d.ts        TypeScript declarations
-data/day_*.json        WHO igrowup day-indexed LMS tables (from R anthro package)
-data/month_*.json      WHO monthly LMS tables (manually maintained)
-test/anthro.test.js    test suite (33 tests, verified vs R anthro v1.1.0)
-scripts/export-tables.R  re-exports day-indexed tables from the R anthro package
-docs/                  GitHub Pages site (built by CI — do not edit bundle/data here)
+data/day_*.json        WHO igrowup day-indexed LMS tables (0–1826 d)
+data/month_*.json      WHO monthly LMS tables (0–60 m)
+test/anthro.test.js    test suite — 33 tests, no dependencies
+site/                  website source files (CI publishes to gh-pages branch)
 ```
 
 ## Running tests
@@ -20,37 +19,31 @@ docs/                  GitHub Pages site (built by CI — do not edit bundle/dat
 node test/anthro.test.js
 ```
 
-No npm install required. Tests run in Node.js directly, no test framework.
+No npm install needed. No test framework.
 
-## Pre-commit hook
+## How the site is built
 
-The repository uses [Husky](https://typicode.github.io/husky/) to run tests before every commit. To activate it after cloning:
-
-```bash
-npm install   # installs husky and runs `husky` via the prepare script
+```
+npm run build    # bundles src/anthro.js + copies data/ + copies site/ → _site/
+npm run deploy   # runs build, then pushes _site/ to the gh-pages branch
 ```
 
-After that, `node test/anthro.test.js` runs automatically on every `git commit`. Commits are blocked if any test fails.
+The CI workflow (`.github/workflows/ci.yml`) does the same thing automatically on every push to `main` — it runs `npm ci`, then `npm run build`, then deploys via `peaceiris/actions-gh-pages`.
+
+GitHub Pages is configured to serve the `gh-pages` branch. Set it once in repo Settings → Pages → Source: **gh-pages** branch, **/ (root)**.
+
+`data/` in `main` is the single source of truth for the WHO tables — used by npm consumers and copied to the site at build time. No duplication.
 
 ## Updating WHO tables
 
-Day-indexed tables (`data/day_*.json`) are extracted from the R `anthro` package. If WHO publishes updated tables:
+Day-indexed tables (`data/day_*.json`) come from the R package `anthro` v1.1.0. To update them after WHO publishes new tables:
 
-```bash
-# Requires R with anthro and jsonlite packages installed
-Rscript scripts/export-tables.R
-
-# Then verify
-node test/anthro.test.js
-```
+1. Obtain the new datasets from the R `anthro` package (`growthstandards_weianthro` etc.) or from the WHO igrowup software.
+2. Export to the same columnar JSON format (`{M:{i,l,m,s},F:{i,l,m,s}}`).
+3. Replace the relevant files in `data/`.
+4. Run `node test/anthro.test.js`.
 
 Month-indexed tables (`data/month_*.json`) must be updated manually from the [WHO website](https://www.who.int/tools/child-growth-standards/standards).
-
-## Making changes to the library
-
-- Edit `src/anthro.js` only — it is the single source of truth.
-- Keep `src/anthro.d.ts` in sync with any API changes.
-- `docs/anthro.bundle.js` is built by CI — never edit it manually.
 
 ## Pull requests
 

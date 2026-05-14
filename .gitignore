@@ -1,4 +1,6 @@
 node_modules/
+docs/data/
+docs/anthro.bundle.js
 *.log
 .DS_Store
 .env
