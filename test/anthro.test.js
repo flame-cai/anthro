@@ -1,4 +1,4 @@
-// anthro.js 1.0.0 — test suite
+// anthro.js 1.1.1 — test suite
 'use strict';
 const path=require('path'),fs=require('fs');
 const {createAnthro}=require('../src/anthro.js');

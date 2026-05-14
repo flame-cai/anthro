@@ -1,6 +1,6 @@
 /**
  * @module anthro
- * @version 1.0.1
+ * @version 1.1.1
  * @repo https://github.com/flame-cai/anthro
  *
  * ╔══════════════════════════════════════════════════════════════════════════╗
@@ -320,7 +320,7 @@ function createAnthro(dayTables,monthTables){
     batch:(rows,dm='day')=>computeBatch(rows,getT(dm),dm),
     classify,lmsZ,ageDays,monthsToDays,
     meta:{
-      version:'1.0.1',
+      version:'1.1.1',
       repo:'https://github.com/flame-cai/anthro',
       tableIndexing:'DAY-INDEXED (default): one LMS row per day, 0–1826d. MONTH-INDEXED: one row per whole month, 0–60m.',
       tableSource:'WHO igrowup software + R anthro v1.1.0 (WorldHealthOrganization/anthro)',

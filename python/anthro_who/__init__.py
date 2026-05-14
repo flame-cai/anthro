@@ -7,5 +7,5 @@ Python port of the @flame-cai/anthro JavaScript library.
 
 from .anthro import compute, batch, classify, lms_z, age_days, months_to_days, create_anthro
 
-__version__ = "1.0.1"
+__version__ = "1.1.1"
 __all__ = ["compute", "batch", "classify", "lms_z", "age_days", "months_to_days", "create_anthro"]

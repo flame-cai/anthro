@@ -1,6 +1,6 @@
 {
   "name": "@flame-cai/anthro",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "WHO 2006 Child Growth Standards — z-scores and classifications for 6 indicators",
   "main": "src/anthro.js",
   "types": "src/anthro.d.ts",

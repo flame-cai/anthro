@@ -3,7 +3,7 @@
 WHO 2006 Child Growth Standards — z-scores and nutritional classifications for 6 indicators.
 
 **Website:** https://flame-cai.github.io/anthro  
-**Version:** 1.0.1
+**Version:** 1.1.1
 
 Available for **JavaScript / Node.js** (`@flame-cai/anthro` on npm) and **Python** (`anthro` on PyPI).
 
