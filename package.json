@@ -1,7 +1,7 @@
 {
   "name": "@flame-cai/anthro",
   "version": "1.0.1",
-  "description": "WHO 2006 Child Growth Standards \u2014 z-scores and classifications for 6 indicators",
+  "description": "WHO 2006 Child Growth Standards — z-scores and classifications for 6 indicators",
   "main": "src/anthro.js",
   "types": "src/anthro.d.ts",
   "files": [
@@ -28,7 +28,8 @@
   "scripts": {
     "test": "node test/anthro.test.js",
     "export-tables": "Rscript scripts/export-tables.R",
-    "build": "esbuild src/anthro.js --bundle --format=iife --global-name=anthro --outfile=docs/anthro.bundle.js --minify && mkdir -p docs/data && cp data/*.json docs/data/"
+    "build": "esbuild src/anthro.js --bundle --format=iife --global-name=anthro --outfile=docs/anthro.bundle.js --minify && mkdir -p docs/data && cp data/*.json docs/data/",
+    "sync-version": "node -e \"const v=require('fs').readFileSync('VERSION','utf8').trim();const p=require('./package.json');p.version=v;require('fs').writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n');\""
   },
   "engines": {
     "node": ">=24"

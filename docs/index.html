@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="anthro 1.0.0 -- WHO 2006 Child Growth Standards. z-scores and classifications for 6 indicators.">
+<meta name="description" content="anthro 1.0.1 -- WHO 2006 Child Growth Standards. z-scores and classifications for 6 indicators.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://flame-cai.github.io/anthro/">
 <link rel="manifest" href="manifest.webmanifest">
@@ -332,7 +332,7 @@ details[open] > summary { color: var(--tx); margin-bottom: .4rem; }
 
 <nav class="nav" role="navigation" aria-label="Main navigation">
   <div class="nav-in">
-    <a href="#/calculator" class="nav-logo" onclick="go('calc');return false;">anthro<sup>1.0.0</sup></a>
+    <a href="#/calculator" class="nav-logo" onclick="go('calc');return false;">anthro<sup>1.0.1</sup></a>
     <ul class="nav-links" id="nm" role="list">
       <li><a href="#/calculator" id="n-calc">Calculator</a></li>
       <li><a href="#/tables"     id="n-tables">WHO Tables</a></li>
@@ -642,6 +642,27 @@ details[open] > summary { color: var(--tx); margin-bottom: .4rem; }
 })</code></pre>
       </section>
 
+      <section id="pypi">
+        <h2>Python / PyPI</h2>
+<pre><button class="cp" onclick="cp(this)">Copy</button><code>pip install anthro</code></pre>
+<pre><button class="cp" onclick="cp(this)">Copy</button><code><span class="kw">from</span> anthro <span class="kw">import</span> compute, batch
+
+result = <span class="fn">compute</span>({
+    <span class="st">'sex'</span>:       <span class="st">'female'</span>,
+    <span class="st">'dob'</span>:       <span class="st">'2024-01-15'</span>,
+    <span class="st">'measured'</span>:  <span class="st">'2025-01-15'</span>,
+    <span class="st">'weight_kg'</span>: <span class="nm">7.0</span>,
+    <span class="st">'height_cm'</span>: <span class="nm">64.0</span>,
+    <span class="st">'muac_mm'</span>:   <span class="nm">136</span>,
+})
+
+result[<span class="st">'lhfa'</span>]            <span class="cm"># 'Moderately stunted'</span>
+result[<span class="st">'z_lhfa'</span>]          <span class="cm"># -2.7901</span>
+result[<span class="st">'wfa'</span>]             <span class="cm"># 'Normal'</span>
+result[<span class="st">'muac_threshold'</span>]  <span class="cm"># 'Normal'</span></code></pre>
+        <p>Full Python API reference: <a href="https://github.com/flame-cai/anthro/blob/main/python/README.md" target="_blank" rel="noopener">python/README.md</a></p>
+      </section>
+
       <section id="clone">
         <h2>Clone directly</h2>
         <p>Use <code>src/anthro.js</code> and <code>data/</code> directly without npm. Works in Node.js and any bundler (webpack, Vite, Metro).</p>
@@ -828,6 +849,14 @@ SD23 adjustment when |z| > 3:
 
       <section id="changelog">
         <h2>Changelog</h2>
+        <h3>1.0.1</h3>
+        <ul style="padding-left:1.1rem">
+          <li>Python package (<code>anthro</code> on PyPI) — same WHO tables, formula, and output schema as the JS library</li>
+          <li>Shared <code>data/</code> directory — no duplication between JS and Python packages</li>
+          <li>Global <code>VERSION</code> file — single source of truth for npm, PyPI, and JS source</li>
+          <li>CI publishes both npm and PyPI on version tag push</li>
+          <li>34 Python tests verified against R anthro v1.1.0</li>
+        </ul>
         <h3>1.0.0</h3>
         <ul style="padding-left:1.1rem">
           <li>Day-indexed (WHO igrowup) and month-indexed (WHO supplementary) table modes</li>
@@ -843,7 +872,8 @@ SD23 adjustment when |z| > 3:
 
       <section id="contributing">
         <h2>Contributing</h2>
-        <p>Tests: <code>node test/anthro.test.js</code> -- no install required.</p>
+        <p>JS tests: <code>node test/anthro.test.js</code> — no install required.</p>
+        <p>Python tests: <code>python3 python/test_anthro.py</code> — no install required.</p>
         <p>To re-export day-indexed tables from the R anthro package: <code>Rscript scripts/export-tables.R</code></p>
         <p>
           <a href="https://github.com/flame-cai/anthro/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">CONTRIBUTING.md</a> &middot;

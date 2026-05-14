@@ -1,13 +1,14 @@
 """
-Basic smoke tests for anthro_who Python package.
+Basic smoke tests for the anthro Python package.
+Mirrors key assertions from test/anthro.test.js.
 Mirrors key assertions from anthro.test.js.
 """
 
 import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.dirname(__file__))
 
-from anthro_who import compute, batch, lms_z, age_days, months_to_days, classify
+from anthro import compute, batch, lms_z, age_days, months_to_days, classify
 
 PASS = 0
 FAIL = 0

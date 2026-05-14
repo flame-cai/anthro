@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "anthro-who"
-version = "1.0.1"
+name = "anthro"
+dynamic = ["version"]
 description = "WHO 2006 Child Growth Standards — z-scores and classifications for 6 indicators"
 readme = "README.md"
 license = { text = "MIT" }
@@ -33,8 +33,14 @@ Homepage    = "https://flame-cai.github.io/anthro"
 Repository  = "https://github.com/flame-cai/anthro"
 "Bug Tracker" = "https://github.com/flame-cai/anthro/issues"
 
-[tool.hatch.build.targets.wheel]
-packages = ["anthro_who"]
+[tool.hatch.version]
+path = "../VERSION"
+pattern = "(?P<version>.+)"
 
+[tool.hatch.build.targets.wheel]
+packages = ["anthro"]
+
+# Bundle the shared data/ tables into the wheel so it works after pip install.
+# The path is relative to this pyproject.toml (i.e. python/).
 [tool.hatch.build.targets.wheel.force-include]
-"anthro_who/data" = "anthro_who/data"
+"../data" = "anthro/data"
