@@ -27,7 +27,8 @@
   ],
   "scripts": {
     "test": "node test/anthro.test.js",
-    "export-tables": "Rscript scripts/export-tables.R"
+    "export-tables": "Rscript scripts/export-tables.R",
+    "build": "esbuild src/anthro.js --bundle --format=iife --global-name=anthro --outfile=docs/anthro.bundle.js --minify && mkdir -p docs/data && cp data/*.json docs/data/"
   },
   "engines": {
     "node": ">=24"

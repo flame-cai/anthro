@@ -6,16 +6,16 @@ on:
   pull_request:
     branches: [main]
 
-# Cancels any in-progress run for the same branch, preventing duplicate
-# artifact uploads which would cause the deploy job to fail.
+# Cancels any in-progress run for the same branch.
+# Prevents duplicate artifact uploads which cause the deploy job to fail.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Force all actions to run on Node.js 24.
-# actions/upload-pages-artifact@v3 uses upload-artifact@v4 internally, which
-# still targets Node 20 by default. This env var overrides that. The resulting
-# "being forced to run on Node.js 24" warning is expected and harmless.
+# Force all actions onto Node.js 24.
+# actions/upload-pages-artifact@v3 internally uses upload-artifact@v4 which
+# defaults to Node 20. This env var overrides it. The resulting warning
+# "being forced to run on Node.js 24" is expected and harmless.
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -30,10 +30,10 @@ jobs:
       - run: node test/anthro.test.js
 
   deploy:
-    name: Deploy to GitHub Pages
+    name: Build and deploy to GitHub Pages
     needs: test
     runs-on: ubuntu-latest
-    # Only runs on direct pushes to main — not on pull requests, not on tags.
+    # Only on direct pushes to main, not on pull requests or tags.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
@@ -50,12 +50,12 @@ jobs:
       - name: Install esbuild
         run: npm install -g esbuild
 
-      - name: Build
+      - name: Build site
         run: |
-          mkdir -p docs/data
           esbuild src/anthro.js \
             --bundle --format=iife --global-name=anthro \
             --outfile=docs/anthro.bundle.js --minify
+          mkdir -p docs/data
           cp data/*.json docs/data/
 
       - name: Upload Pages artifact
@@ -63,16 +63,11 @@ jobs:
         with:
           path: docs/
 
-      - name: Deploy
-        id: deploy
+      - id: deploy
         uses: actions/deploy-pages@v4
 
-  # This job only runs when a version tag (e.g. v1.0.0) is pushed.
-  # A push to main triggers test + deploy, but NOT publish.
-  # To publish a new version:
-  #   git tag v1.0.0
-  #   git push origin v1.0.0
-  # Also requires the NPM_TOKEN secret to be set in repo Settings → Secrets.
+  # Only runs when a version tag is pushed (e.g. git tag v1.0.0 && git push origin v1.0.0).
+  # Requires NPM_TOKEN secret in repo Settings -> Secrets -> Actions.
   publish:
     name: Publish to npm
     needs: test
