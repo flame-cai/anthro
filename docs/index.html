@@ -12,7 +12,7 @@
 /* ---- tokens ---------------------------------------------------------------- */
 :root {
   --r: 5px; --rl: 8px; --t: 140ms ease;
-  --fw: 1280px; /* max page width */
+  --fw: 1440px; /* max page width */
 }
 :root, [data-theme="light"] {
   --bg: #ffffff;  --bg2: #f6f8fa;  --bg3: #eaeef2;
@@ -132,9 +132,9 @@ button, input, select { font: inherit; color: inherit; }
 main { max-width: var(--fw); margin: 0 auto; padding: 2rem 1.5rem 5rem; }
 /* ---- typography ----------------------------------------------------------- */
 h1 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 700; letter-spacing: -.02em; line-height: 1.2; margin-bottom: .75rem; }
-h2 { font-size: 1.2rem; font-weight: 700; margin: 2rem 0 .6rem; }
+h2 { font-size: 1.15rem; font-weight: 700; margin: 2.5rem 0 .65rem; padding-bottom: .5rem; border-bottom: 1px solid var(--bd); }
 h2:first-child { margin-top: 0; }
-h3 { font-size: .95rem; font-weight: 600; margin: 1.5rem 0 .4rem; }
+h3 { font-size: .92rem; font-weight: 600; margin: 1.5rem 0 .4rem; color: var(--tx2); }
 h3:first-child { margin-top: 0; }
 p { color: var(--tx2); line-height: 1.7; margin-bottom: .75rem; }
 p:last-child { margin-bottom: 0; }
@@ -150,13 +150,13 @@ hr { border: none; border-top: 1px solid var(--bd); margin: 1.75rem 0; }
 /* ---- card ----------------------------------------------------------------- */
 .card { background: var(--bg2); border: 1px solid var(--bd); border-radius: var(--rl); padding: 1.1rem; }
 /* ---- form ----------------------------------------------------------------- */
-.field { display: flex; flex-direction: column; gap: .25rem; }
-.field label { font-size: .78rem; font-weight: 600; color: var(--tx); }
-.hint { font-size: .7rem; color: var(--tx2); line-height: 1.4; margin-top: 2px; }
-.err-msg { font-size: .7rem; color: var(--rd); margin-top: .15rem; display: none; }
+.field { display: flex; flex-direction: column; gap: .3rem; }
+.field label { font-size: .76rem; font-weight: 600; color: var(--tx); letter-spacing: .01em; }
+.hint { font-size: .69rem; color: var(--txd); line-height: 1.4; margin-top: 1px; }
+.err-msg { font-size: .69rem; color: var(--rd); margin-top: .15rem; display: none; }
 input, select {
   background: var(--bg); border: 1px solid var(--bd); color: var(--tx);
-  border-radius: var(--r); padding: .38rem .65rem; font-size: .9rem; width: 100%;
+  border-radius: var(--r); padding: .42rem .7rem; font-size: .88rem; width: 100%;
   transition: border-color var(--t), box-shadow var(--t);
 }
 input.invalid { border-color: var(--rd); }
@@ -199,11 +199,11 @@ input::placeholder { color: var(--txd); }
 /* ---- calculator layout ---------------------------------------------------- */
 .calc-layout {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 480px 1fr;
   gap: 1.5rem;
   align-items: start;
 }
-@media (max-width: 820px) { .calc-layout { grid-template-columns: 1fr; } }
+@media (max-width: 1000px) { .calc-layout { grid-template-columns: 1fr; } }
 /* ---- results -------------------------------------------------------------- */
 .rmeta {
   font-size: .8rem; color: var(--tx2);
@@ -285,20 +285,25 @@ td { padding: .4rem .8rem; border-bottom: 1px solid var(--bd2); font-variant-num
 tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover td { background: var(--bg3); }
 /* ---- docs layout ---------------------------------------------------------- */
-.docs-wrap { display: grid; grid-template-columns: 185px 1fr; gap: 2.5rem; align-items: start; }
+.docs-wrap { display: grid; grid-template-columns: 210px 1fr; gap: 3rem; align-items: start; }
 .docs-nav { position: sticky; top: 60px; font-size: .8rem; }
 .dnl {
-  font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em;
-  color: var(--txd); padding: .6rem .5rem .2rem; margin-top: .6rem;
+  font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--txd); padding: .8rem .6rem .25rem; margin-top: .75rem;
 }
 .dnl:first-child { margin-top: 0; }
 .docs-nav a {
-  display: block; padding: .22rem .5rem; color: var(--tx2);
+  display: block; padding: .28rem .6rem; color: var(--tx2);
   border-left: 2px solid transparent; text-decoration: none;
-  border-radius: 0 3px 3px 0; transition: all var(--t);
+  border-radius: 0 4px 4px 0; transition: all var(--t);
+  font-size: .78rem;
 }
 .docs-nav a:hover, .docs-nav a.on { color: var(--tx); border-left-color: var(--gn); background: var(--gn2); }
-@media (max-width: 700px) { .docs-wrap { grid-template-columns: 1fr; } .docs-nav { display: none; } }
+@media (max-width: 800px) { .docs-wrap { grid-template-columns: 1fr; } .docs-nav { display: none; } }
+/* ---- docs section spacing ------------------------------------------------- */
+.docs-wrap > div > section { padding-bottom: 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--bd2); }
+.docs-wrap > div > section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.docs-wrap > div > hr { display: none; } /* replaced by section borders */
 /* ---- who tables ----------------------------------------------------------- */
 .tbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-end; margin-bottom: .75rem; }
 .pager { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--tx2); }
@@ -557,12 +562,14 @@ details[open] > summary { color: var(--tx); margin-bottom: .4rem; }
   <div class="tw" id="tc" aria-live="polite">
     <p style="padding:3rem;text-align:center;color:var(--txd)">Select an indicator above.</p>
   </div>
-</div><!-- /p-tables -->
-
+</div><!-- /p-tables -->\n
 
 <!-- ======== DOCS =========================================================== -->
 <div id="p-docs" class="page">
-  <h1>Documentation</h1>
+  <div style="padding-bottom:1.25rem;border-bottom:2px solid var(--bd);margin-bottom:2rem">
+    <h1 style="margin-bottom:.3rem">Documentation</h1>
+    <p style="font-size:.9rem;color:var(--tx2);margin:0">API reference, usage examples, and technical details for the anthro library.</p>
+  </div>
 
   <div class="docs-wrap">
 
@@ -583,7 +590,6 @@ details[open] > summary { color: var(--tx); margin-bottom: .4rem; }
       <a href="#flags">Plausibility flags</a>
       <a href="#precision">Precision</a>
       <div class="dnl">Project</div>
-      <a href="#author">Author</a>
       <a href="#citations">Citations</a>
       <a href="#changelog">Changelog</a>
       <a href="#contributing">Contributing</a>
@@ -803,15 +809,6 @@ SD23 adjustment when |z| > 3:
       </section>
 
       <hr>
-
-      <section id="author">
-        <h2>Author</h2>
-        <p>
-          <strong>Ansh Kushwaha</strong><br>
-          <a href="mailto:ansh.k@alumni.iitm.ac.in">ansh.k@alumni.iitm.ac.in</a> &middot;
-          <a href="https://www.linkedin.com/in/ansh333k/" target="_blank" rel="noopener">linkedin.com/in/ansh333k</a>
-        </p>
-      </section>
 
       <section id="citations">
         <h2>Citations</h2>

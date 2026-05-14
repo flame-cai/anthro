@@ -2,7 +2,6 @@
 
 WHO 2006 Child Growth Standards — z-scores and nutritional classifications for 6 indicators.
 
-**Author:** Ansh Kushwaha · ansh.k@alumni.iitm.ac.in · [LinkedIn](https://www.linkedin.com/in/ansh333k/)  
 **Website:** https://flame-cai.github.io/anthro  
 **Version:** 1.0.0
 

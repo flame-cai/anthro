@@ -1,10 +1,3 @@
-/* TEAM */
-Name: Ansh Kushwaha
-Email: ansh.k@alumni.iitm.ac.in
-LinkedIn: https://www.linkedin.com/in/ansh333k/
-GitHub: https://github.com/flame-cai
-Project: https://github.com/flame-cai/anthro
-
 /* THANKS */
 WHO Multicentre Growth Reference Study Group (2006)
 R anthro package maintainers — WorldHealthOrganization/anthro
