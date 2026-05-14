@@ -1,7 +1,6 @@
 /**
  * @module anthro
  * @version 1.0.0
- * @license MIT
  * @repo https://github.com/flame-cai/anthro
  *
  * ╔══════════════════════════════════════════════════════════════════════════╗
@@ -42,10 +41,6 @@
  * ║  PLAUSIBILITY FLAGS — WHO igrowup (igrowup_standard.sas)                ║
  * ║    WFA/LHFA: |z|>6  |  WFLH/BMI/ACFA: |z|>5                           ║
  * ║                                                                          ║
- * ║  VERIFIED: All z-scores match R anthro v1.1.0 to 4 decimal places.     ║
- * ║  5 non-100% cases vs R anthro are due to R's 2-dp output rounding       ║
- * ║  (not a library error): when exact z is within ±0.005 of a cut-point,  ║
- * ║  R's rounded z changes classification; our exact formula does not.      ║
  * ╚══════════════════════════════════════════════════════════════════════════╝
  */
 
@@ -59,11 +54,6 @@ const MAX_AGE_MONTHS     = 60;
 const FLAG = { wfa:6, lhfa:6, wflh:5, bmi:5, acfa:5 };
 
 // ── LMS z-score formula with SD23 adjustment ──────────────────────────────────
-/**
- * WHO restricted LMS z-score (WHO 2006 Technical Report §5.2).
- * Uses exact floating-point arithmetic — does NOT round before classifying.
- * This is intentionally more precise than R anthro's 2-dp output rounding.
- */
 function lmsZ(X, L, M, S) {
   if (!isFinite(X)||X<=0||!isFinite(M)||M<=0||!isFinite(L)||!isFinite(S)) return null;
   let z = Math.abs(L)<1e-10 ? Math.log(X/M)/S : (Math.pow(X/M,L)-1)/(L*S);

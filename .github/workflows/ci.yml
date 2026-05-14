@@ -24,11 +24,12 @@ jobs:
       - run: node test/anthro.test.js
 
   deploy:
-    name: Build and deploy to GitHub Pages
+    name: Deploy to GitHub Pages
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:
@@ -55,17 +56,17 @@ jobs:
         id: deploy
         uses: actions/deploy-pages@v4
 
-  # publish:
-  #   name: Publish to npm
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   if: startsWith(github.ref, 'refs/tags/v')
-  #   steps:
-  #     - uses: actions/checkout@v6
-  #     - uses: actions/setup-node@v6
-  #       with:
-  #         node-version: '24'
-  #         registry-url: 'https://registry.npmjs.org'
-  #     - run: npm publish --access public
-  #       env:
-  #         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  publish:
+    name: Publish to npm
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

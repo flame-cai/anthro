@@ -10,7 +10,8 @@ src/anthro.d.ts        TypeScript declarations
 data/day_*.json        WHO igrowup day-indexed LMS tables (0–1826 d)
 data/month_*.json      WHO monthly LMS tables (0–60 m)
 test/anthro.test.js    test suite
-site/                  website source files (CI publishes to gh-pages branch)
+docs/                  website source (index.html, api.js, static files)
+                       CI adds anthro.bundle.js and data/ at build time
 ```
 
 ## Running tests
@@ -21,29 +22,24 @@ node test/anthro.test.js
 
 No npm install needed. No test framework.
 
-## How the site is built
+## How the site deploys
 
-```
-npm run build    # bundles src/anthro.js + copies data/ + copies site/ → _site/
-npm run deploy   # runs build, then pushes _site/ to the gh-pages branch
-```
+On every push to `main`, the CI workflow (`.github/workflows/ci.yml`):
 
-The CI workflow (`.github/workflows/ci.yml`) does the same thing automatically on every push to `main` — it runs `npm ci`, then `npm run build`, then deploys via `peaceiris/actions-gh-pages`.
+1. Runs `node test/anthro.test.js`
+2. Bundles `src/anthro.js` → `docs/anthro.bundle.js` with esbuild
+3. Copies `data/*.json` → `docs/data/`
+4. Uploads `docs/` as a GitHub Pages artifact and deploys it
 
-GitHub Pages is configured to serve the `gh-pages` branch. Set it once in repo Settings → Pages → Source: **gh-pages** branch, **/ (root)**.
+**GitHub Pages setup** (one-time): repo Settings → Pages → Source: **GitHub Actions**.
 
-`data/` in `main` is the single source of truth for the WHO tables — used by npm consumers and copied to the site at build time. No duplication.
+`data/` in the repo root is the single source of truth for WHO tables. npm consumers use it directly; the website gets a copy at build time.
 
 ## Updating WHO tables
 
-Day-indexed tables (`data/day_*.json`) come from the R package `anthro` v1.1.0. To update them after WHO publishes new tables:
-
-1. Obtain the new datasets from the R `anthro` package (`growthstandards_weianthro` etc.) or from the WHO igrowup software.
-2. Export to the same columnar JSON format (`{M:{i,l,m,s},F:{i,l,m,s}}`).
-3. Replace the relevant files in `data/`.
-4. Run `node test/anthro.test.js`.
-
-Month-indexed tables (`data/month_*.json`) must be updated manually from the [WHO website](https://www.who.int/tools/child-growth-standards/standards).
+1. Obtain updated datasets from the R `anthro` package or WHO igrowup software.
+2. Replace the relevant files in `data/` using the same JSON format (`{M:{i,l,m,s},F:{i,l,m,s}}`).
+3. Run `node test/anthro.test.js`.
 
 ## Pull requests
 

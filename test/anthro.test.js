@@ -1,8 +1,4 @@
-/**
- * anthro.js v2.1.0 — Test Suite
- * Tests both 'day' and 'month' modes
- * Z-scores verified against R anthro v1.1.0 (WorldHealthOrganization/anthro)
- */
+// anthro.js 1.0.0 — test suite
 'use strict';
 const path=require('path'),fs=require('fs');
 const {createAnthro}=require('../src/anthro.js');
@@ -22,7 +18,7 @@ function assertZ(got,exp,tol=0.02,lbl=''){
   if(Math.abs(got-exp)>tol)throw new Error(`${lbl} z=${got.toFixed(3)} expected≈${exp} (±${tol})`);
 }
 
-console.log('\n══ anthro.js v2.1.0 — Test Suite ══\n');
+console.log('\n══ anthro.js — test suite ══\n');
 
 // ── DAY MODE ──────────────────────────────────────────────────────────────────
 console.log('Group 1: Day-mode z-scores (vs R anthro v1.1.0)\n');
