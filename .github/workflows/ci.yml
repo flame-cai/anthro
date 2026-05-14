@@ -121,9 +121,21 @@ jobs:
       - name: Install build tools
         run: pip install hatchling build
 
+      # data/ lives at the repo root and is shared with the JS package.
+      # Copy it into python/anthro/data/ so the wheel build is self-contained
+      # (python -m build creates a sdist first, then builds the wheel from that
+      # sdist in a temp dir — relative paths like ../data don't survive that).
+      # The copy is ephemeral: it exists only in this CI runner and is never
+      # committed to the repo.
+      - name: Stage data into Python package for wheel build
+        run: cp -r data python/anthro/data
+
       - name: Build Python package
-        # python/ is the project root; dist/ lands in python/dist/
         run: python -m build python/
+
+      - name: Remove staged data (keep repo clean)
+        if: always()
+        run: rm -rf python/anthro/data
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

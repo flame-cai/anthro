@@ -39,8 +39,5 @@ pattern = "(?P<version>.+)"
 
 [tool.hatch.build.targets.wheel]
 packages = ["anthro"]
-
-# Bundle the shared data/ tables into the wheel so it works after pip install.
-# The path is relative to this pyproject.toml (i.e. python/).
-[tool.hatch.build.targets.wheel.force-include]
-"../data" = "anthro/data"
+# Include the WHO LMS JSON tables that are staged into anthro/data/ by CI.
+artifacts = ["anthro/data/*.json"]
