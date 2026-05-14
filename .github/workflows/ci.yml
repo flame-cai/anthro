@@ -119,13 +119,12 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
-    # id-token: write is required for Trusted Publishing (OIDC).
-    # No PYPI_TOKEN secret needed.
+    # Uses Trusted Publishing (OIDC) — no token secret needed.
+    # One-time setup on the EXISTING PyPI project:
+    #   https://pypi.org/manage/project/anthro/settings/publishing/
+    #   → Add publisher: GitHub / flame-cai / anthro / ci.yml / environment: (leave blank)
     permissions:
       id-token: write
-    environment:
-      name: pypi
-      url: https://pypi.org/project/anthro/
     steps:
       - uses: actions/checkout@v6
 
