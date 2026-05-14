@@ -9,7 +9,7 @@ src/anthro.js          core library (UMD — Node.js, browser, React Native)
 src/anthro.d.ts        TypeScript declarations
 data/day_*.json        WHO igrowup day-indexed LMS tables (0–1826 d)
 data/month_*.json      WHO monthly LMS tables (0–60 m)
-test/anthro.test.js    test suite — 33 tests, no dependencies
+test/anthro.test.js    test suite
 site/                  website source files (CI publishes to gh-pages branch)
 ```
 

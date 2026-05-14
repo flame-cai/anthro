@@ -7,7 +7,6 @@ WHO 2006 Child Growth Standards — z-scores and nutritional status for 6 indica
 ```
 version: 1.0.0
 tables:  WHO igrowup day-indexed (0–1826 d) + WHO monthly (0–60 m)
-tests:   33 / 33 pass, verified against R anthro v1.1.0
 ```
 
 ## Install
