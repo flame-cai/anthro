@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "anthro-who"
+version = "1.0.1"
+description = "WHO 2006 Child Growth Standards — z-scores and classifications for 6 indicators"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+keywords = [
+    "who", "child-growth", "anthropometry", "z-score",
+    "stunting", "wasting", "underweight", "muac",
+    "lhfa", "wfa", "wflh", "bmi", "acfa", "igrowup",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+
+[project.urls]
+Homepage    = "https://flame-cai.github.io/anthro"
+Repository  = "https://github.com/flame-cai/anthro"
+"Bug Tracker" = "https://github.com/flame-cai/anthro/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["anthro_who"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"anthro_who/data" = "anthro_who/data"

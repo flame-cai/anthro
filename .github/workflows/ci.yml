@@ -26,9 +26,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+
       - uses: actions/setup-node@v6
         with: { node-version: '24' }
-      - run: node test/anthro.test.js
+      - name: Run JS tests
+        run: node test/anthro.test.js
+
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Run Python tests
+        run: python3 python/test_anthro.py
 
   deploy:
     name: Build and deploy to GitHub Pages
@@ -69,7 +76,7 @@ jobs:
 
   # Only runs when a version tag is pushed (e.g. git tag v1.0.0 && git push origin v1.0.0).
   # Requires NPM_TOKEN secret in repo Settings -> Secrets -> Actions.
-  publish:
+  publish-npm:
     name: Publish to npm
     needs: test
     runs-on: ubuntu-latest
@@ -83,3 +90,28 @@ jobs:
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # Only runs when a version tag is pushed (e.g. git tag v1.0.0 && git push origin v1.0.0).
+  # Requires PYPI_TOKEN secret in repo Settings -> Secrets -> Actions.
+  publish-pypi:
+    name: Publish to PyPI
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+
+      - name: Install build tools
+        run: pip install hatchling build
+
+      - name: Build Python package
+        run: python -m build python/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python/dist/
+          password: ${{ secrets.PYPI_TOKEN }}
