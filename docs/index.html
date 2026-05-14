@@ -3,254 +3,255 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="anthro 1.0.0 — WHO 2006 Child Growth Standards. Z-scores for 6 nutritional indicators. Free, open-source JavaScript library.">
+<meta name="description" content="anthro — WHO 2006 Child Growth Standards. z-scores and nutritional classifications for 6 indicators.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://flame-cai.github.io/anthro/">
 <link rel="manifest" href="manifest.webmanifest">
-<title>anthro — WHO Child Growth Standards</title>
+<title>anthro</title>
 <style>
-/* ─── tokens ────────────────────────────────────────────────────────────── */
 :root{
-  --r:6px; --rl:10px; --mw:1060px;
-  --t:120ms ease;
-  --fs:1rem;
+  --r:5px;--rl:8px;--t:120ms ease;
 }
+.calc-grid{display:grid;grid-template-columns:minmax(320px,380px) 1fr;gap:1.5rem;align-items:start}
+@media(max-width:780px){.calc-grid{grid-template-columns:1fr}}
 :root,[data-theme=light]{
-  --bg:#fff; --bg2:#f6f8fa; --bg3:#eaeef2;
-  --bd:#d0d7de; --bd2:#e1e8ee;
-  --tx:#1f2328; --tx2:#57606a; --txd:#8c959f;
-  --lk:#0969da; --lkh:#0a2d6e;
-  --gn:#1a7f37; --gn2:#e6f4ea; --gn3:#94d3a2;
-  --am:#9a6700; --am2:#fff8c5; --am3:#e3b341;
-  --rd:#cf222e; --rd2:#ffebe9; --rd3:#ff8182;
-  --bl:#0550ae; --bl2:#ddf4ff; --bl3:#54aeff;
+  --bg:#ffffff;--bg2:#f6f8fa;--bg3:#eaeef2;
+  --bd:#d0d7de;--bd2:#e8ecf0;
+  --tx:#1f2328;--tx2:#57606a;--txd:#8c959f;
+  --lk:#0969da;
+  --gn:#1a7f37;--gn2:#e8f5ea;--gn3:#82cfaa;
+  --am:#9a6700;--am2:#fff8c5;--am3:#d4a72c;
+  --rd:#cf222e;--rd2:#fff0ee;--rd3:#ffaaaa;
+  --bl:#0550ae;--bl2:#ddf4ff;--bl3:#54aeff;
   --sh:0 1px 3px rgba(31,35,40,.1);
-  --sh2:0 4px 12px rgba(31,35,40,.12);
 }
 [data-theme=dark]{
-  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d;
-  --bd:#30363d; --bd2:#21262d;
-  --tx:#e6edf3; --tx2:#8b949e; --txd:#484f58;
-  --lk:#58a6ff; --lkh:#79c0ff;
-  --gn:#3fb950; --gn2:#0d2212; --gn3:#196c2e;
-  --am:#d29922; --am2:#2d2000; --am3:#9e6a03;
-  --rd:#f85149; --rd2:#2d0f0f; --rd3:#6d1616;
-  --bl:#58a6ff; --bl2:#051d35; --bl3:#0c3b6e;
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --bd:#30363d;--bd2:#2a3140;
+  --tx:#e6edf3;--tx2:#8b949e;--txd:#484f58;
+  --lk:#58a6ff;
+  --gn:#3fb950;--gn2:#0d1f12;--gn3:#2a5c38;
+  --am:#d29922;--am2:#1f1700;--am3:#6d4800;
+  --rd:#f85149;--rd2:#1f0a0a;--rd3:#6d1616;
+  --bl:#58a6ff;--bl2:#051d35;--bl3:#0c3b6e;
   --sh:0 1px 3px rgba(0,0,0,.4);
-  --sh2:0 4px 12px rgba(0,0,0,.5);
 }
-/* ─── reset ─────────────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:var(--html-fs,16px);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html{font-size:var(--html-fs,16px);scroll-behavior:smooth}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
-  font-size:var(--fs);line-height:1.6;background:var(--bg);color:var(--tx);
+  font-size:1rem;line-height:1.6;background:var(--bg);color:var(--tx);
   transition:background var(--t),color var(--t);-webkit-font-smoothing:antialiased}
 a{color:var(--lk)}
-a:hover{color:var(--lkh)}
-a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{
-  outline:2px solid var(--lk);outline-offset:2px;border-radius:2px}
+a:hover{text-decoration:underline}
 button,input,select{font:inherit;color:inherit}
-img{display:block;max-width:100%}
-/* ─── skip link ─────────────────────────────────────────────────────────── */
-.skip{position:absolute;top:-100%;left:1rem;padding:.35rem .9rem;
+/* skip link */
+.skip{position:absolute;top:-100%;left:1rem;padding:.3rem .8rem;
   background:var(--lk);color:#fff;font-size:.8rem;font-weight:600;
   border-radius:var(--r);z-index:999}
 .skip:focus{top:.5rem}
-/* ─── nav ───────────────────────────────────────────────────────────────── */
+/* nav */
 .nav{position:sticky;top:0;z-index:100;
-  background:var(--bg);border-bottom:1px solid var(--bd);
-  box-shadow:var(--sh)}
-.nav-in{max-width:var(--mw);margin:0 auto;padding:0 1.25rem;
-  height:48px;display:flex;align-items:center;gap:.75rem}
-.nav-logo{font-size:1.1rem;font-weight:700;color:var(--tx);
-  letter-spacing:-.02em;text-decoration:none;white-space:nowrap;flex-shrink:0}
-.nav-logo:hover{text-decoration:none;color:var(--tx)}
-.nav-logo sup{font-size:.55em;font-weight:400;color:var(--tx2);letter-spacing:0}
-.nav-links{display:flex;list-style:none;
-  border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;flex-shrink:0}
-.nav-links a{display:block;padding:.3rem .85rem;
-  font-size:.82rem;font-weight:500;color:var(--tx2);
-  border-right:1px solid var(--bd);text-decoration:none;white-space:nowrap;
+  background:var(--bg);border-bottom:1px solid var(--bd);box-shadow:var(--sh)}
+.nav-in{padding:0 1.5rem;height:46px;display:flex;align-items:center;gap:.75rem}
+.logo{font-size:1.05rem;font-weight:700;color:var(--tx);text-decoration:none;
+  white-space:nowrap;flex-shrink:0}
+.logo:hover{text-decoration:none}
+.logo sup{font-size:.5em;font-weight:400;color:var(--txd);letter-spacing:0}
+.navlinks{display:flex;list-style:none;border:1px solid var(--bd);
+  border-radius:var(--r);overflow:hidden;flex-shrink:0}
+.navlinks a{display:block;padding:.28rem .8rem;font-size:.8rem;font-weight:500;
+  color:var(--tx2);border-right:1px solid var(--bd);
+  text-decoration:none;white-space:nowrap;
   transition:background var(--t),color var(--t)}
-.nav-links li:last-child a{border-right:none}
-.nav-links a:hover{background:var(--bg2);color:var(--tx)}
-.nav-links a[aria-current=page]{background:var(--bg2);color:var(--tx);font-weight:700}
-.nav-gap{flex:1;min-width:0}
-.nav-tools{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
-/* font size control */
-.fsc{display:flex;align-items:center;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;height:30px}
-.fsb{width:28px;border:none;background:transparent;color:var(--tx2);
-  cursor:pointer;font-size:.78rem;font-weight:700;
-  transition:background var(--t);display:flex;align-items:center;justify-content:center;height:100%}
-.fsb:hover{background:var(--bg2)}
-.fsl{font-size:.7rem;color:var(--tx2);padding:0 .4rem;min-width:32px;text-align:center;line-height:1}
-.thb{width:30px;height:30px;border:1px solid var(--bd);border-radius:var(--r);
-  background:transparent;color:var(--tx2);cursor:pointer;font-size:.9rem;
-  display:flex;align-items:center;justify-content:center;
+.navlinks li:last-child a{border-right:none}
+.navlinks a:hover{background:var(--bg2);color:var(--tx)}
+.navlinks a[aria-current=page]{background:var(--bg2);color:var(--tx);font-weight:700}
+.gap{flex:1}
+.navtools{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+.fsc{display:flex;align-items:center;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;height:28px}
+.fsb{width:26px;border:none;background:transparent;color:var(--tx2);cursor:pointer;
+  font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;height:100%;
   transition:background var(--t)}
+.fsb:hover{background:var(--bg2)}
+.fsb:focus-visible,.thb:focus-visible,button:focus-visible,
+input:focus-visible,select:focus-visible,.segbtn:focus-visible{
+  outline:2px solid var(--lk);outline-offset:2px;border-radius:2px}
+.fsl{font-size:.68rem;color:var(--tx2);padding:0 .35rem;min-width:30px;text-align:center}
+.thb{width:28px;height:28px;border:1px solid var(--bd);border-radius:var(--r);
+  background:transparent;color:var(--tx2);cursor:pointer;font-size:.85rem;
+  display:flex;align-items:center;justify-content:center;transition:background var(--t)}
 .thb:hover{background:var(--bg2)}
-/* mobile */
-.hmb{display:none;width:30px;height:30px;border:1px solid var(--bd);
-  border-radius:var(--r);background:transparent;color:var(--tx);
-  cursor:pointer;align-items:center;justify-content:center;font-size:1.1rem}
-@media(max-width:640px){
-  .nav-links{position:absolute;top:48px;left:0;right:0;
-    display:none;flex-direction:column;border:none;border-radius:0;
-    border-bottom:1px solid var(--bd);background:var(--bg);box-shadow:var(--sh2);z-index:200}
-  .nav-links.open{display:flex}
-  .nav-links a{border-right:none;border-bottom:1px solid var(--bd2);padding:.75rem 1.25rem;font-size:.9rem}
+.hmb{display:none;width:28px;height:28px;border:1px solid var(--bd);border-radius:var(--r);
+  background:transparent;color:var(--tx);cursor:pointer;align-items:center;justify-content:center;font-size:1rem}
+@media(max-width:600px){
+  .navlinks{position:absolute;top:46px;left:0;right:0;display:none;
+    flex-direction:column;border:none;border-radius:0;
+    border-bottom:1px solid var(--bd);background:var(--bg);box-shadow:var(--sh);z-index:200}
+  .navlinks.open{display:flex}
+  .navlinks a{border-right:none;border-bottom:1px solid var(--bd2);padding:.7rem 1.25rem}
   .hmb{display:flex}
 }
-/* ─── layout ─────────────────────────────────────────────────────────────── */
+/* layout */
 .page{display:none}
 .page.active{display:block}
-main{max-width:var(--mw);margin:0 auto;padding:2.5rem 1.25rem 5rem}
-/* ─── type ───────────────────────────────────────────────────────────────── */
-h1{font-size:clamp(1.6rem,3vw,2.1rem);font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-bottom:1rem}
-h2{font-size:1.35rem;font-weight:700;letter-spacing:-.01em;margin:2.5rem 0 .75rem}
+main{padding:0}
+/* full-width page wrapper */
+.pw{padding:2rem 2rem 4rem}
+/* typography */
+h1{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-bottom:.75rem}
+h2{font-size:1.2rem;font-weight:700;letter-spacing:-.01em;margin:2rem 0 .6rem}
 h2:first-child{margin-top:0}
-h3{font-size:1rem;font-weight:600;margin:1.75rem 0 .5rem}
+h3{font-size:.95rem;font-weight:600;margin:1.5rem 0 .4rem}
 h3:first-child{margin-top:0}
-p{color:var(--tx2);line-height:1.75;margin-bottom:.9rem}
+p{color:var(--tx2);line-height:1.7;margin-bottom:.75rem}
 p:last-child{margin-bottom:0}
-p strong,p b{color:var(--tx)}
-li{color:var(--tx2);line-height:1.9}
-/* ─── utils ──────────────────────────────────────────────────────────────── */
+p strong{color:var(--tx)}
+li{color:var(--tx2);line-height:1.85}
 .muted{color:var(--tx2)}
 .dim{color:var(--txd)}
-.small{font-size:.85rem}
-.mono{font-family:"SFMono-Regular",Consolas,monospace}
-hr{border:none;border-top:1px solid var(--bd);margin:2rem 0}
-/* ─── grid ───────────────────────────────────────────────────────────────── */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+hr{border:none;border-top:1px solid var(--bd);margin:1.75rem 0}
+/* grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
-@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}}
-/* ─── card ───────────────────────────────────────────────────────────────── */
-.card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:1.25rem}
-/* ─── form ───────────────────────────────────────────────────────────────── */
-.field{display:flex;flex-direction:column;gap:.3rem}
-.field label{font-size:.82rem;font-weight:600;color:var(--tx)}
-.hint{font-size:.73rem;color:var(--tx2);line-height:1.4}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}
+@media(max-width:900px){.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.g2,.g3,.g4{grid-template-columns:1fr}}
+/* card */
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:1rem}
+/* form */
+.field{display:flex;flex-direction:column;gap:.25rem}
+.field label{font-size:.78rem;font-weight:600;color:var(--tx)}
+.hint{font-size:.7rem;color:var(--tx2);line-height:1.4}
+.err-msg{font-size:.7rem;color:var(--rd);margin-top:.15rem;display:none}
 input,select{background:var(--bg);border:1px solid var(--bd);color:var(--tx);
-  border-radius:var(--r);padding:.45rem .7rem;font-size:.95rem;width:100%;
+  border-radius:var(--r);padding:.38rem .65rem;font-size:.9rem;width:100%;
   transition:border-color var(--t),box-shadow var(--t)}
-input:focus,select:focus{outline:none;border-color:var(--lk);box-shadow:0 0 0 3px color-mix(in srgb,var(--lk) 15%,transparent)}
+input.invalid,select.invalid{border-color:var(--rd)}
+input:focus,select:focus{outline:none;border-color:var(--lk);box-shadow:0 0 0 3px color-mix(in srgb,var(--lk) 12%,transparent)}
 input::placeholder{color:var(--txd)}
+/* date display input (read-only, styled) */
+input[data-datepicker]{cursor:pointer}
 /* segmented */
 .seg{display:flex;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
-.seg-btn{flex:1;padding:.4rem .5rem;font-size:.82rem;font-weight:500;
+.segbtn{flex:1;padding:.35rem .4rem;font-size:.78rem;font-weight:500;
   border:none;background:transparent;color:var(--tx2);cursor:pointer;
-  border-right:1px solid var(--bd);transition:background var(--t),color var(--t);
-  white-space:nowrap}
-.seg-btn:last-child{border-right:none}
-.seg-btn.on{background:var(--tx);color:var(--bg);font-weight:700}
-/* ─── buttons ─────────────────────────────────────────────────────────────── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
-  padding:.5rem 1.25rem;font-size:.9rem;font-weight:600;
+  border-right:1px solid var(--bd);transition:background var(--t),color var(--t);white-space:nowrap}
+.segbtn:last-child{border-right:none}
+.segbtn.on{background:var(--tx);color:var(--bg);font-weight:700}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;
+  padding:.42rem 1.1rem;font-size:.88rem;font-weight:600;
   border:1px solid transparent;border-radius:var(--r);cursor:pointer;
-  transition:background var(--t),box-shadow var(--t),transform 80ms ease;white-space:nowrap}
+  transition:filter var(--t),transform 80ms ease;white-space:nowrap}
 .btn:active{transform:scale(.98)}
 .btn-primary{background:var(--gn);color:#fff;border-color:var(--gn)}
 .btn-primary:hover{filter:brightness(1.08)}
-.btn-full{width:100%;margin-top:.9rem}
-.btn-sm{font-size:.78rem;padding:.3rem .8rem}
+.btn-full{width:100%;margin-top:.75rem}
+.btn-sm{font-size:.75rem;padding:.28rem .7rem}
 .btn-ghost{background:transparent;color:var(--tx);border-color:var(--bd)}
 .btn-ghost:hover{background:var(--bg2)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;filter:none}
-/* ─── alerts ──────────────────────────────────────────────────────────────── */
-.alert{display:flex;gap:.5rem;padding:.65rem .9rem;border-radius:var(--r);
-  font-size:.83rem;border:1px solid;line-height:1.5;margin-bottom:.75rem}
+/* alerts */
+.alert{display:flex;gap:.4rem;padding:.55rem .8rem;border-radius:var(--r);
+  font-size:.8rem;border:1px solid;line-height:1.5;margin-bottom:.6rem}
 .ae{background:var(--rd2);border-color:var(--rd3);color:var(--rd)}
 .aw{background:var(--am2);border-color:var(--am3);color:var(--am)}
-/* ─── result cards ────────────────────────────────────────────────────────── */
-.rmeta{font-size:.82rem;color:var(--tx2);display:flex;flex-wrap:wrap;gap:.9rem;
-  padding:.6rem 0;border-bottom:1px solid var(--bd2);margin-bottom:1rem}
-.rmeta b{color:var(--tx)}
-.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:.65rem;margin-bottom:1rem}
-.ind{border-radius:var(--r);padding:.75rem 1rem;border:1px solid var(--bd);
-  background:var(--bg);position:relative;transition:box-shadow var(--t)}
-.ind:hover{box-shadow:var(--sh)}
-.ind-n{font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:var(--tx2);margin-bottom:.25rem}
-.ind-v{font-size:1rem;font-weight:700;line-height:1.2;margin-bottom:.2rem}
-.ind-s{font-size:.7rem;color:var(--tx2);line-height:1.4}
-.ind-flag{position:absolute;top:.4rem;right:.5rem;font-size:.62rem;font-weight:700;
-  background:var(--rd2);color:var(--rd);padding:1px 5px;border-radius:3px}
-.c-ok{background:var(--gn2);border-color:var(--gn3)} .c-ok .ind-v{color:var(--gn)}
-.c-mod{background:var(--am2);border-color:var(--am3)} .c-mod .ind-v{color:var(--am)}
-.c-sev{background:var(--rd2);border-color:var(--rd3)} .c-sev .ind-v{color:var(--rd)}
-.c-ow{background:var(--bl2);border-color:var(--bl3)}  .c-ow .ind-v{color:var(--bl)}
-.c-na{background:var(--bg2);border-style:dashed}
-.c-na .ind-v{color:var(--txd);font-size:.8rem;font-weight:400}
-/* ─── code ────────────────────────────────────────────────────────────────── */
-pre,code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:.82rem}
-code{background:var(--bg2);border:1px solid var(--bd2);padding:1px 5px;border-radius:3px}
+/* ── RESULTS ──────────────────────────────────────────────────────────── */
+/* summary bar */
+.sum-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:.5rem;margin-bottom:1rem}
+.sum-item{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);
+  padding:.55rem .75rem;text-align:center}
+.sum-label{font-size:.65rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--txd);margin-bottom:.15rem}
+.sum-val{font-size:.92rem;font-weight:700;color:var(--tx)}
+/* indicator rows */
+.ind-table{width:100%;border-collapse:collapse}
+.ind-table th{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--txd);padding:.4rem .75rem;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
+.ind-table th:last-child{text-align:right}
+.ind-table td{padding:.55rem .75rem;border-bottom:1px solid var(--bd2);vertical-align:middle}
+.ind-table tr:last-child td{border-bottom:none}
+.ind-table tr:hover td{background:var(--bg2)}
+.ind-name{font-size:.85rem;font-weight:600;color:var(--tx)}
+.ind-desc{font-size:.72rem;color:var(--txd)}
+.ind-z{font-size:.82rem;font-family:"SFMono-Regular",Consolas,monospace;
+  font-variant-numeric:tabular-nums;color:var(--tx2)}
+.ind-class{display:inline-flex;align-items:center;gap:.3rem;
+  font-size:.8rem;font-weight:700;padding:.2rem .55rem;
+  border-radius:20px;border:1px solid;white-space:nowrap}
+.c-ok {background:var(--gn2);border-color:var(--gn3);color:var(--gn)}
+.c-mod{background:var(--am2);border-color:var(--am3);color:var(--am)}
+.c-sev{background:var(--rd2);border-color:var(--rd3);color:var(--rd)}
+.c-ow {background:var(--bl2);border-color:var(--bl3);color:var(--bl)}
+.c-na {background:var(--bg3);border-color:var(--bd);color:var(--txd);font-weight:400;font-style:italic}
+.ind-flag{font-size:.62rem;font-weight:700;
+  background:var(--rd2);color:var(--rd);padding:1px 5px;border-radius:3px;margin-left:.3rem}
+/* code */
+pre,code{font-family:"SFMono-Regular",Consolas,monospace;font-size:.8rem}
+code{background:var(--bg2);border:1px solid var(--bd2);padding:1px 4px;border-radius:3px}
 pre{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);
-  padding:1.1rem 1.25rem;overflow-x:auto;line-height:1.7;tab-size:2;
-  margin:.75rem 0;position:relative}
+  padding:1rem 1.1rem;overflow-x:auto;line-height:1.65;tab-size:2;margin:.6rem 0;position:relative}
 pre code{background:none;border:none;padding:0}
 .kw{color:#cf222e}[data-theme=dark] .kw{color:#ff7b72}
 .st{color:#032f62}[data-theme=dark] .st{color:#a5d6ff}
-.cm{color:#6e7781}[data-theme=dark] .cm{color:#8b949e}
+.cm{color:#6e7781}[data-theme=dark] .cm{color:#6e7781}
 .fn{color:#0550ae}[data-theme=dark] .fn{color:#79c0ff}
 .nm{color:#953800}[data-theme=dark] .nm{color:#f0883e}
-.cp{position:absolute;top:.5rem;right:.5rem;padding:2px 8px;font-size:.72rem;
+.cp{position:absolute;top:.4rem;right:.4rem;padding:2px 7px;font-size:.68rem;
   font-weight:600;background:var(--bg3);color:var(--tx2);border:1px solid var(--bd);
   border-radius:3px;cursor:pointer;transition:background var(--t)}
 .cp:hover{background:var(--bg)}
-/* ─── tables ──────────────────────────────────────────────────────────────── */
-.tw{overflow-x:auto;border:1px solid var(--bd);border-radius:var(--rl);margin:.75rem 0}
-table{width:100%;border-collapse:collapse;font-size:.82rem}
+/* tables */
+.tw{overflow-x:auto;border:1px solid var(--bd);border-radius:var(--rl);margin:.6rem 0}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
 thead tr{background:var(--bg2)}
-th{padding:.45rem .9rem;text-align:left;font-size:.7rem;font-weight:700;
+th{padding:.4rem .8rem;text-align:left;font-size:.68rem;font-weight:700;
   text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);
   border-bottom:1px solid var(--bd);white-space:nowrap}
-td{padding:.45rem .9rem;border-bottom:1px solid var(--bd2);font-variant-numeric:tabular-nums}
+td{padding:.4rem .8rem;border-bottom:1px solid var(--bd2);font-variant-numeric:tabular-nums}
 tbody tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:var(--bg3)}
-/* ─── docs layout ─────────────────────────────────────────────────────────── */
-.docs-wrap{display:grid;grid-template-columns:200px 1fr;gap:2.5rem;align-items:start}
-.docs-nav{position:sticky;top:64px;font-size:.82rem}
-.docs-nav-label{font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.09em;color:var(--txd);padding:.65rem .6rem .25rem;
-  margin-top:.75rem}
-.docs-nav-label:first-child{margin-top:0}
-.docs-nav a{display:block;padding:.25rem .6rem;color:var(--tx2);
-  border-left:2px solid transparent;text-decoration:none;
-  transition:color var(--t),border-color var(--t),background var(--t);
-  border-radius:0 3px 3px 0}
+tbody tr:hover td{background:var(--bg2)}
+/* docs layout */
+.docs-wrap{display:grid;grid-template-columns:190px 1fr;gap:2.5rem;align-items:start}
+.docs-nav{position:sticky;top:60px;font-size:.8rem}
+.dnl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--txd);padding:.6rem .5rem .2rem;margin-top:.6rem}
+.dnl:first-child{margin-top:0}
+.docs-nav a{display:block;padding:.22rem .5rem;color:var(--tx2);
+  border-left:2px solid transparent;text-decoration:none;border-radius:0 3px 3px 0;
+  transition:all var(--t)}
 .docs-nav a:hover,.docs-nav a.on{color:var(--tx);border-left-color:var(--gn);background:var(--gn2)}
-@media(max-width:740px){.docs-wrap{grid-template-columns:1fr}.docs-nav{display:none}}
-/* ─── tabs ────────────────────────────────────────────────────────────────── */
-.tabs{display:flex;border-bottom:2px solid var(--bd);margin-bottom:1.5rem;flex-wrap:wrap;gap:0}
-.tab{padding:.45rem 1.1rem;font-size:.85rem;font-weight:500;border:none;
+@media(max-width:700px){.docs-wrap{grid-template-columns:1fr}.docs-nav{display:none}}
+/* tabs */
+.tabs{display:flex;border-bottom:2px solid var(--bd);margin-bottom:1.25rem}
+.tab{padding:.4rem 1rem;font-size:.82rem;font-weight:500;border:none;
   background:transparent;color:var(--tx2);cursor:pointer;
-  border-bottom:2px solid transparent;margin-bottom:-2px;
-  transition:color var(--t),border-color var(--t)}
+  border-bottom:2px solid transparent;margin-bottom:-2px;transition:all var(--t)}
 .tab:hover{color:var(--tx)}
 .tab.on{color:var(--tx);border-bottom-color:var(--tx);font-weight:700}
 .tp{display:none}.tp.on{display:block}
-/* ─── who tables page ─────────────────────────────────────────────────────── */
-.tbar{display:flex;flex-wrap:wrap;gap:.65rem;align-items:flex-end;margin-bottom:.9rem}
-.pager{display:flex;align-items:center;gap:.6rem;font-size:.8rem;color:var(--tx2);flex-wrap:wrap}
-/* ─── badge ───────────────────────────────────────────────────────────────── */
-.badge{display:inline-flex;align-items:center;font-size:.7rem;font-weight:700;
-  padding:2px 8px;border-radius:20px;border:1px solid;letter-spacing:.02em}
+/* who tables */
+.tbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:flex-end;margin-bottom:.75rem}
+.pager{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--tx2)}
+/* badges */
+.badge{display:inline-flex;align-items:center;font-size:.68rem;font-weight:700;
+  padding:2px 7px;border-radius:20px;border:1px solid}
 .bg{background:var(--gn2);color:var(--gn);border-color:var(--gn3)}
 .bb{background:var(--bl2);color:var(--bl);border-color:var(--bl3)}
-/* ─── misc ────────────────────────────────────────────────────────────────── */
-.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
-/* info grid */
-.r-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:.5rem;margin:.75rem 0}
-.ri{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--r);padding:.55rem .8rem}
-.ri-k{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txd);margin-bottom:.15rem}
-.ri-v{font-size:.85rem;color:var(--tx);font-variant-numeric:tabular-nums;word-break:break-word}
-.ri-v.ok{color:var(--gn)} .ri-v.flag{color:var(--rd);font-weight:700}
-.ri-v.corr{color:var(--am)}
-details>summary{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--tx2);padding:.35rem 0;user-select:none}
+/* date picker overlay */
+.dp-wrap{position:relative}
+.dp-icon{position:absolute;right:.55rem;top:50%;transform:translateY(-50%);
+  pointer-events:none;color:var(--txd);font-size:.85rem}
+/* sr-only */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+details>summary{cursor:pointer;font-size:.8rem;font-weight:600;color:var(--tx2);
+  padding:.3rem 0;user-select:none;list-style:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:'▶ ';font-size:.65rem}
+details[open]>summary::before{content:'▼ '}
 details>summary:hover{color:var(--tx)}
-details[open]>summary{color:var(--tx);margin-bottom:.5rem}
+details[open]>summary{color:var(--tx);margin-bottom:.4rem}
 </style>
 </head>
 <body>
@@ -258,59 +259,70 @@ details[open]>summary{color:var(--tx);margin-bottom:.5rem}
 
 <nav class="nav" role="navigation" aria-label="Main navigation">
   <div class="nav-in">
-    <a href="#/" class="nav-logo">anthro<sup>1.0.0</sup></a>
-    <ul class="nav-links" id="navmenu" role="list">
+    <a href="#/" class="logo">anthro<sup>1.0.0</sup></a>
+    <ul class="navlinks" id="nm" role="list">
       <li><a href="#/calculator" id="n-calc">Calculator</a></li>
       <li><a href="#/tables"     id="n-tables">WHO Tables</a></li>
       <li><a href="#/docs"       id="n-docs">Docs</a></li>
     </ul>
-    <div class="nav-gap"></div>
-    <div class="nav-tools">
+    <div class="gap"></div>
+    <div class="navtools">
       <div class="fsc" role="group" aria-label="Text size">
-        <button class="fsb" onclick="fsChange(-1)" aria-label="Decrease text size">A−</button>
+        <button class="fsb" onclick="fsChg(-1)" aria-label="Decrease text size">A−</button>
         <span class="fsl" id="fsl" aria-live="polite"></span>
-        <button class="fsb" onclick="fsChange(+1)" aria-label="Increase text size">A+</button>
+        <button class="fsb" onclick="fsChg(+1)" aria-label="Increase text size">A+</button>
       </div>
-      <button class="thb" id="thb" onclick="thToggle()" aria-label="Toggle theme">◑</button>
-      <button class="hmb" id="hmb" aria-label="Open menu" aria-expanded="false" aria-controls="navmenu">☰</button>
+      <button class="thb" id="thb" onclick="thTog()" aria-label="Toggle theme">◑</button>
+      <button class="hmb" id="hmb" aria-label="Toggle menu" aria-expanded="false" aria-controls="nm">☰</button>
     </div>
   </div>
 </nav>
 
 <main id="main" tabindex="-1">
 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     CALCULATOR
-══════════════════════════════════════════════════════════════════════════════ -->
+<!-- ══ CALCULATOR ══════════════════════════════════════════════════════════ -->
 <div id="p-calc" class="page active">
+<div class="pw calc-grid">
 
-  <div style="padding-bottom:1.75rem;border-bottom:1px solid var(--bd);margin-bottom:2rem">
-    <h1>Child Growth Calculator</h1>
-    <p style="font-size:1.05rem;max-width:580px;color:var(--tx2)">
-      Enter a child's measurements to get WHO 2006 nutritional status for 6 indicators.
-      Only sex and date of birth are required — any missing measurement shows a clear
-      explanation rather than an empty result.
+<!-- left: form -->
+<div>
+  <div style="margin-bottom:1.25rem">
+    <h1 style="margin-bottom:.4rem">anthro</h1>
+    <p style="font-size:.88rem;color:var(--tx2);margin-bottom:.75rem">
+      WHO 2006 Child Growth Standards. z-scores and nutritional classifications for 6 indicators.
     </p>
-    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.9rem">
-      <span class="badge bg">Day-indexed WHO igrowup tables</span>
-      <span class="badge bb">Month-indexed WHO tables</span>
+    <div style="display:flex;flex-wrap:wrap;gap:.35rem">
+      <span class="badge bg">Day-indexed WHO igrowup</span>
+      <span class="badge bb">Month-indexed WHO</span>
     </div>
   </div>
 
-  <div class="card" style="max-width:740px">
-    <form id="cf" novalidate onsubmit="return false">
-
-      <div class="g3" style="margin-bottom:1rem">
+  <div class="card">
+    <form id="cf" novalidate onsubmit="return false" aria-label="Child measurements">
+      <div class="g2" style="margin-bottom:.75rem">
         <div class="field">
           <label for="dob">Date of birth <span aria-hidden="true" style="color:var(--rd)">*</span></label>
-          <input type="date" id="dob" autocomplete="bday" aria-required="true">
-          <span class="hint">Gives exact age in days — most accurate</span>
+          <div class="dp-wrap">
+            <input type="text" id="dob" placeholder="DD/MM/YYYY"
+              maxlength="10" autocomplete="bday" aria-required="true"
+              oninput="fmtDate(this)" onblur="validateDob()">
+            <span class="dp-icon">📅</span>
+          </div>
+          <span class="hint">Age in days is computed from this date</span>
+          <span class="err-msg" id="dob-err">Enter a valid date (DD/MM/YYYY)</span>
         </div>
         <div class="field">
           <label for="mdate">Measurement date</label>
-          <input type="date" id="mdate">
-          <span class="hint">Leave blank for today</span>
+          <div class="dp-wrap">
+            <input type="text" id="mdate" placeholder="DD/MM/YYYY"
+              maxlength="10" oninput="fmtDate(this)">
+            <span class="dp-icon">📅</span>
+          </div>
+          <span class="hint">Defaults to today</span>
         </div>
+      </div>
+
+      <div class="g2" style="margin-bottom:.75rem">
         <div class="field">
           <label for="sex">Sex <span aria-hidden="true" style="color:var(--rd)">*</span></label>
           <select id="sex" aria-required="true">
@@ -319,44 +331,47 @@ details[open]>summary{color:var(--tx);margin-bottom:.5rem}
             <option value="F">Female</option>
           </select>
         </div>
+        <div class="field">
+          <label>Measurement position</label>
+          <select id="mpos">
+            <option value="">Auto (L if &lt;24m, H if ≥24m)</option>
+            <option value="L">L — Recumbent / lying</option>
+            <option value="H">H — Standing</option>
+          </select>
+        </div>
       </div>
 
-      <div class="g3" style="margin-bottom:1rem">
+      <div class="g3" style="margin-bottom:.75rem">
         <div class="field">
           <label for="ht">Height / Length (cm)</label>
-          <input type="number" id="ht" placeholder="64.0" step="0.5" min="20" max="130">
-          <span class="hint">20–130 cm, 0.5 cm steps</span>
+          <input type="number" id="ht" placeholder="64.0" step="0.5" min="38" max="150"
+            oninput="validateNum(this,38,150)" onblur="validateNum(this,38,150)">
+          <span class="hint">38–150 cm</span>
+          <span class="err-msg" id="ht-err">38–150 cm</span>
         </div>
         <div class="field">
           <label for="wt">Weight (kg)</label>
-          <input type="number" id="wt" placeholder="7.0" step="0.01" min="0.5" max="70">
-          <span class="hint">Decimals OK — e.g. 7.35 kg</span>
+          <input type="number" id="wt" placeholder="7.0" step="0.01" min="0.9" max="58"
+            oninput="validateNum(this,0.9,58)" onblur="validateNum(this,0.9,58)">
+          <span class="hint">0.9–58 kg</span>
+          <span class="err-msg" id="wt-err">0.9–58 kg</span>
         </div>
         <div class="field">
           <label for="muac">MUAC (cm)</label>
-          <input type="number" id="muac" placeholder="13.6" step="0.1" min="5" max="30">
-          <span class="hint">Mid-upper arm circumference</span>
+          <input type="number" id="muac" placeholder="13.6" step="0.1" min="6" max="30"
+            oninput="validateNum(this,6,30)" onblur="validateNum(this,6,30)">
+          <span class="hint">6–30 cm</span>
+          <span class="err-msg" id="muac-err">6–30 cm</span>
         </div>
       </div>
 
-      <div class="g2" style="margin-bottom:.25rem">
-        <div class="field">
-          <label>Position</label>
-          <select id="mpos">
-            <option value="">Auto — lying if &lt;24 months, standing if ≥24 months</option>
-            <option value="L">Lying / Recumbent</option>
-            <option value="H">Standing</option>
-          </select>
-          <span class="hint">Affects ±0.7 cm correction per WHO 2006 Ch. 7</span>
+      <div class="field" style="margin-bottom:.75rem">
+        <label>Table mode</label>
+        <div class="seg" role="group" aria-label="Table mode">
+          <button type="button" class="segbtn on" id="md-day"   aria-pressed="true"  onclick="setMode('day')">Day-indexed (WHO igrowup)</button>
+          <button type="button" class="segbtn"    id="md-month" aria-pressed="false" onclick="setMode('month')">Month-indexed (WHO)</button>
         </div>
-        <div class="field">
-          <label>Table mode</label>
-          <div class="seg" role="group" aria-label="Table mode">
-            <button type="button" class="seg-btn on" id="md-day"   aria-pressed="true"  onclick="setMode('day')">Day-indexed</button>
-            <button type="button" class="seg-btn"    id="md-month" aria-pressed="false" onclick="setMode('month')">Month-indexed</button>
-          </div>
-          <span class="hint" id="mdesc">WHO igrowup — 1 LMS row per day (0–1826 d), most precise</span>
-        </div>
+        <span class="hint" id="mdesc">1 LMS row per day (0–1826 d). Use when date of birth is known.</span>
       </div>
 
       <button type="button" class="btn btn-primary btn-full" id="cbtn" onclick="doCalc()">
@@ -364,100 +379,123 @@ details[open]>summary{color:var(--tx);margin-bottom:.5rem}
       </button>
     </form>
   </div>
+</div>
 
-  <section id="results" aria-live="polite" style="display:none;margin-top:2rem;max-width:740px">
+<!-- right: results -->
+<div id="results-col">
+  <div id="results" aria-live="polite" style="display:none">
     <div id="rerr"></div>
     <div id="rwarn"></div>
 
-    <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem">
-      <h2 style="margin:0">Results</h2>
-      <span style="font-size:.75rem;color:var(--txd)" id="rsrc"></span>
+    <!-- patient summary -->
+    <div class="sum-bar" id="sumbar"></div>
+
+    <!-- indicator results table -->
+    <div class="tw" style="margin-top:.75rem">
+      <table class="ind-table">
+        <thead>
+          <tr>
+            <th>Indicator</th>
+            <th>z-score</th>
+            <th style="text-align:right">Classification</th>
+          </tr>
+        </thead>
+        <tbody id="ind-tbody"></tbody>
+      </table>
     </div>
 
-    <div class="rmeta" id="rmeta"></div>
-    <div class="rgrid" id="rgrid" role="list"></div>
+    <details style="margin-top:.75rem">
+      <summary>Full JSON output</summary>
+      <pre id="rraw" style="font-size:.7rem;max-height:300px;overflow-y:auto;margin-top:.4rem"></pre>
+    </details>
 
-    <div id="r-info" style="display:none;margin-top:.75rem">
-      <div class="r-info-grid" id="r-info-grid"></div>
-    </div>
+    <p style="font-size:.68rem;color:var(--txd);margin-top:.6rem" id="rsrc"></p>
+  </div>
 
-  </section>
-
+  <!-- placeholder when no results yet -->
+  <div id="results-placeholder"
+    style="height:100%;min-height:300px;display:flex;align-items:center;justify-content:center;
+    border:1px dashed var(--bd);border-radius:var(--rl);color:var(--txd);font-size:.85rem;text-align:center;padding:2rem">
+    Enter measurements and click Calculate
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     WHO TABLES
-══════════════════════════════════════════════════════════════════════════════ -->
-<div id="p-tables" class="page">
-  <h1>WHO LMS Tables</h1>
-  <p class="muted">Browse, search, and download the LMS parameter tables used for z-score computation. Source: WHO Multicentre Growth Reference Study Group (2006).</p>
+</div><!-- grid -->
+</div>
 
-  <div class="card" style="margin-bottom:1.25rem">
-    <div class="g2" style="margin-bottom:.9rem">
+<!-- ══ WHO TABLES ══════════════════════════════════════════════════════════ -->
+<div id="p-tables" class="page">
+<div class="pw">
+  <h1>WHO LMS Tables</h1>
+  <p class="muted" style="margin-bottom:1.25rem">
+    LMS parameters (Box-Cox power L, median M, coefficient of variation S) used for z-score computation.
+    Source: WHO Multicentre Growth Reference Study Group (2006).
+  </p>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="g4" style="margin-bottom:.75rem">
       <div class="field">
         <label>Table mode</label>
         <div class="seg" role="group">
-          <button class="seg-btn on" aria-pressed="true"  id="tm-day"   onclick="setTM('day')">Day-indexed</button>
-          <button class="seg-btn"    aria-pressed="false" id="tm-month" onclick="setTM('month')">Month-indexed</button>
+          <button class="segbtn on" aria-pressed="true"  id="tm-day"   onclick="setTM('day')">Day-indexed</button>
+          <button class="segbtn"    aria-pressed="false" id="tm-month" onclick="setTM('month')">Month-indexed</button>
         </div>
-        <span class="hint" id="tmhint">1 row per day (0–1826 d) from WHO igrowup software</span>
+        <span class="hint" id="tmhint">1 row per day (0–1826 d) — WHO igrowup</span>
       </div>
       <div class="field">
         <label for="tind">Indicator</label>
         <select id="tind" onchange="loadTbl()">
-          <option value="wfa">Weight-for-Age (WFA)</option>
-          <option value="lhfa">Length/Height-for-Age (LHFA)</option>
-          <option value="bmi">BMI-for-Age (BMI)</option>
-          <option value="acfa">MUAC-for-Age (ACFA)</option>
+          <option value="wfa">Weight-for-age (WFA)</option>
+          <option value="lhfa">Length/height-for-age (LHFA)</option>
+          <option value="bmi">BMI-for-age (BMI)</option>
+          <option value="acfa">MUAC-for-age (ACFA)</option>
           <option value="wfl">Weight-for-Length (WFL)</option>
           <option value="wfh">Weight-for-Height (WFH)</option>
         </select>
       </div>
-    </div>
-    <div class="g2">
       <div class="field">
         <label>Sex</label>
         <div class="seg" role="group">
-          <button class="seg-btn on" aria-pressed="true"  id="ts-m" onclick="setTS('M')">Male</button>
-          <button class="seg-btn"    aria-pressed="false" id="ts-f" onclick="setTS('F')">Female</button>
+          <button class="segbtn on" aria-pressed="true"  id="ts-m" onclick="setTS('M')">Male</button>
+          <button class="segbtn"    aria-pressed="false" id="ts-f" onclick="setTS('F')">Female</button>
         </div>
       </div>
-      <div style="display:flex;align-items:flex-end;gap:.5rem;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="dlCurrent()">↓ This table (JSON)</button>
-        <button class="btn btn-ghost btn-sm" onclick="dlAll()">↓ All 12 tables</button>
+      <div class="field" style="justify-content:flex-end">
+        <label>&nbsp;</label>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="dlCurrent()">↓ This table</button>
+          <button class="btn btn-ghost btn-sm" onclick="dlAll()">↓ All 12 tables</button>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="tbar">
-    <div class="field" style="flex:0 0 200px">
-      <label for="tsrch" class="sr-only">Filter rows</label>
-      <input type="number" id="tsrch" placeholder="Filter by age / height…" oninput="filterTbl()" step="any">
+    <div class="field" style="flex:0 0 180px">
+      <input type="number" id="tsrch" placeholder="Filter by age or height…" oninput="filterTbl()" step="any">
     </div>
     <div class="pager">
       <button class="btn btn-ghost btn-sm" onclick="tPrev()" id="tprev">← Prev</button>
       <span id="tpinfo" aria-live="polite"></span>
       <button class="btn btn-ghost btn-sm" onclick="tNext()" id="tnext">Next →</button>
     </div>
-    <span id="tinfo" class="dim small" style="margin-left:auto"></span>
+    <span id="tinfo" class="dim" style="margin-left:auto;font-size:.72rem"></span>
   </div>
 
   <div class="tw" id="tc" aria-live="polite">
-    <p style="padding:3rem;text-align:center;color:var(--txd)">Choose an indicator above to browse the table.</p>
+    <p style="padding:3rem;text-align:center;color:var(--txd)">Select an indicator above.</p>
   </div>
 </div>
+</div>
 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     DOCS
-══════════════════════════════════════════════════════════════════════════════ -->
+<!-- ══ DOCS ════════════════════════════════════════════════════════════════ -->
 <div id="p-docs" class="page">
+<div class="pw">
   <h1>Documentation</h1>
 
   <div class="docs-wrap">
-
-    <!-- sidebar -->
-    <nav class="docs-nav" aria-label="Sections">
-      <div class="docs-nav-label">Usage</div>
+    <nav class="docs-nav" aria-label="Documentation sections">
+      <div class="dnl">Usage</div>
       <a href="#browser">Browser / CDN</a>
       <a href="#npm">npm</a>
       <a href="#clone">Clone directly</a>
@@ -465,28 +503,27 @@ details[open]>summary{color:var(--tx);margin-bottom:.5rem}
       <a href="#missing">Missing inputs</a>
       <a href="#input-ref">Input reference</a>
       <a href="#output-ref">Output reference</a>
-      <div class="docs-nav-label">Reference</div>
+      <div class="dnl">Reference</div>
       <a href="#tables-src">Table sources</a>
       <a href="#formula">Formula</a>
       <a href="#correction">Measure correction</a>
       <a href="#cutpoints">Cut-points</a>
       <a href="#flags">Plausibility flags</a>
-      <a href="#precision">Precision note</a>
-      <div class="docs-nav-label">Project</div>
+      <a href="#precision">Precision</a>
+      <div class="dnl">Project</div>
+      <a href="#author">Author</a>
       <a href="#citations">Citations</a>
       <a href="#changelog">Changelog</a>
       <a href="#contributing">Contributing</a>
     </nav>
 
-    <!-- content -->
     <div>
-
       <section id="browser">
         <h2>Browser / CDN</h2>
-        <p>Load two scripts. No build step, no npm. Tables are fetched once and cached by the browser.</p>
-<pre><button class="cp" onclick="cp(this)">Copy</button><code><span class="cm">&lt;!-- library (~11 KB minified) --&gt;</span>
+        <p>Load two scripts. No build step required. Tables are fetched once and cached by the browser.</p>
+<pre><button class="cp" onclick="cp(this)">Copy</button><code><span class="cm">&lt;!-- library --&gt;</span>
 &lt;<span class="kw">script</span> src=<span class="st">"https://flame-cai.github.io/anthro/anthro.bundle.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
-<span class="cm">&lt;!-- API helper: loads tables, exposes AnthroAPI --&gt;</span>
+<span class="cm">&lt;!-- API helper: loads tables, exposes window.AnthroAPI --&gt;</span>
 &lt;<span class="kw">script</span> src=<span class="st">"https://flame-cai.github.io/anthro/api.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
 &lt;<span class="kw">script</span>&gt;
   <span class="kw">await</span> AnthroAPI.<span class="fn">ready</span>()
@@ -494,7 +531,7 @@ details[open]>summary{color:var(--tx);margin-bottom:.5rem}
   <span class="kw">const</span> r = AnthroAPI.<span class="fn">compute</span>({
     mode:      <span class="st">'day'</span>,         <span class="cm">// 'day' (default) | 'month'</span>
     sex:       <span class="st">'female'</span>,
-    dob:       <span class="st">'2024-01-15'</span>, <span class="cm">// date of birth — most precise</span>
+    dob:       <span class="st">'2024-01-15'</span>, <span class="cm">// ISO 8601 date of birth</span>
     weight_kg: <span class="nm">7.0</span>,
     height_cm: <span class="nm">64.0</span>,
     muac_mm:   <span class="nm">136</span>,
@@ -504,20 +541,20 @@ details[open]>summary{color:var(--tx);margin-bottom:.5rem}
   r.z_lhfa         <span class="cm">// -2.7901</span>
   r.wfa            <span class="cm">// 'Normal'</span>
   r.muac_threshold <span class="cm">// 'Normal'</span>
-  r.bmi_val        <span class="cm">// 17.0898  (kg/m²)</span>
+  r.bmi_val        <span class="cm">// 17.0898</span>
 &lt;/<span class="kw">script</span>&gt;</code></pre>
-        <p>The tables (~480 KB total) are served from <a href="https://flame-cai.github.io/anthro/data/" target="_blank" rel="noopener">flame-cai.github.io/anthro/data/</a> with <code>Access-Control-Allow-Origin: *</code>. You can <code>fetch()</code> them from any domain.</p>
+        <p>Tables are served from <code>flame-cai.github.io/anthro/data/</code> with <code>Access-Control-Allow-Origin: *</code>.</p>
       </section>
 
       <section id="npm">
         <h2>npm</h2>
 <pre><button class="cp" onclick="cp(this)">Copy</button><code>npm install @flame-cai/anthro</code></pre>
 <pre><button class="cp" onclick="cp(this)">Copy</button><code><span class="kw">const</span> { createAnthro } = <span class="fn">require</span>(<span class="st">'@flame-cai/anthro'</span>)
-<span class="kw">const</span> fs = <span class="fn">require</span>(<span class="st">'fs'</span>)
-
-<span class="kw">const</span> names  = [<span class="st">'wfa'</span>,<span class="st">'lhfa'</span>,<span class="st">'bmi'</span>,<span class="st">'acfa'</span>,<span class="st">'wfl'</span>,<span class="st">'wfh'</span>]
-<span class="kw">const</span> load   = (p, n) => JSON.<span class="fn">parse</span>(fs.<span class="fn">readFileSync</span>(
+<span class="kw">const</span> fs    = <span class="fn">require</span>(<span class="st">'fs'</span>)
+<span class="kw">const</span> names = [<span class="st">'wfa'</span>, <span class="st">'lhfa'</span>, <span class="st">'bmi'</span>, <span class="st">'acfa'</span>, <span class="st">'wfl'</span>, <span class="st">'wfh'</span>]
+<span class="kw">const</span> load  = (p, n) => JSON.<span class="fn">parse</span>(fs.<span class="fn">readFileSync</span>(
   <span class="fn">require</span>.<span class="fn">resolve</span>(<span class="st">`@flame-cai/anthro/data/${p}_${n}.json`</span>)))
+
 <span class="kw">const</span> anthro = <span class="fn">createAnthro</span>(
   Object.<span class="fn">fromEntries</span>(names.<span class="fn">map</span>(n => [n, <span class="fn">load</span>(<span class="st">'day'</span>,   n)])),
   Object.<span class="fn">fromEntries</span>(names.<span class="fn">map</span>(n => [n, <span class="fn">load</span>(<span class="st">'month'</span>, n)]))
@@ -531,10 +568,10 @@ details[open]>summary{color:var(--tx);margin-bottom:.5rem}
 
       <section id="clone">
         <h2>Clone directly</h2>
-        <p>Clone the repo and point to <code>src/anthro.js</code> and <code>data/</code> directly. No npm, no build step. Works in any Node.js project, Electron app, or bundler.</p>
+        <p>Use <code>src/anthro.js</code> and <code>data/</code> directly without npm. Works in Node.js and any bundler (webpack, Vite, Metro).</p>
 <pre><button class="cp" onclick="cp(this)">Copy</button><code>git clone https://github.com/flame-cai/anthro.git</code></pre>
 <pre><button class="cp" onclick="cp(this)">Copy</button><code><span class="kw">const</span> { createAnthro } = <span class="fn">require</span>(<span class="st">'./anthro/src/anthro.js'</span>)
-<span class="kw">const</span> names  = [<span class="st">'wfa'</span>,<span class="st">'lhfa'</span>,<span class="st">'bmi'</span>,<span class="st">'acfa'</span>,<span class="st">'wfl'</span>,<span class="st">'wfh'</span>]
+<span class="kw">const</span> names  = [<span class="st">'wfa'</span>, <span class="st">'lhfa'</span>, <span class="st">'bmi'</span>, <span class="st">'acfa'</span>, <span class="st">'wfl'</span>, <span class="st">'wfh'</span>]
 <span class="kw">const</span> anthro = <span class="fn">createAnthro</span>(
   Object.<span class="fn">fromEntries</span>(names.<span class="fn">map</span>(n => [n, <span class="fn">require</span>(<span class="st">`./anthro/data/day_${n}.json`</span>)])),
   Object.<span class="fn">fromEntries</span>(names.<span class="fn">map</span>(n => [n, <span class="fn">require</span>(<span class="st">`./anthro/data/month_${n}.json`</span>)]))
@@ -543,60 +580,38 @@ details[open]>summary{color:var(--tx);margin-bottom:.5rem}
 
       <section id="react-native">
         <h2>React Native (Android &amp; iOS)</h2>
-        <p>Works without modification. Metro handles <code>require()</code> for JSON natively.</p>
+        <p>The library has no platform-specific dependencies. Metro handles JSON <code>require()</code> natively.</p>
 
-        <h3>Option A — npm (recommended)</h3>
-<pre><button class="cp" onclick="cp(this)">Copy</button><code>npm install @flame-cai/anthro</code></pre>
+        <h3>Via npm</h3>
 <pre><button class="cp" onclick="cp(this)">Copy</button><code><span class="kw">import</span> { createAnthro } <span class="kw">from</span> <span class="st">'@flame-cai/anthro'</span>
 
-<span class="kw">const</span> names  = [<span class="st">'wfa'</span>,<span class="st">'lhfa'</span>,<span class="st">'bmi'</span>,<span class="st">'acfa'</span>,<span class="st">'wfl'</span>,<span class="st">'wfh'</span>]
+<span class="kw">const</span> names  = [<span class="st">'wfa'</span>, <span class="st">'lhfa'</span>, <span class="st">'bmi'</span>, <span class="st">'acfa'</span>, <span class="st">'wfl'</span>, <span class="st">'wfh'</span>]
 <span class="kw">const</span> anthro = <span class="fn">createAnthro</span>(
   Object.<span class="fn">fromEntries</span>(names.<span class="fn">map</span>(n =>
     [n, <span class="fn">require</span>(<span class="st">`@flame-cai/anthro/data/day_${n}.json`</span>)])),
   Object.<span class="fn">fromEntries</span>(names.<span class="fn">map</span>(n =>
     [n, <span class="fn">require</span>(<span class="st">`@flame-cai/anthro/data/month_${n}.json`</span>)]))
-)
+)</code></pre>
 
-<span class="kw">export function</span> <span class="fn">assess</span>(child) {
-  <span class="kw">return</span> anthro.<span class="fn">compute</span>({
-    mode: <span class="st">'day'</span>, sex: child.sex,
-    dob:  child.dateOfBirth,
-    weight_kg: child.weightKg,
-    height_cm: child.heightCm,
-    muac_mm:   child.muacMm,
-  })
-}</code></pre>
+        <h3>By copying files</h3>
+        <p>Copy <code>src/anthro.js</code> and the <code>data/</code> folder into your project, then <code>require()</code> as above with adjusted paths.</p>
 
-        <h3>Option B — copy files</h3>
-        <p>Copy <code>src/anthro.js</code> and the entire <code>data/</code> folder into your project.</p>
-<pre><button class="cp" onclick="cp(this)">Copy</button><code>your-rn-app/
-  src/lib/
-    anthro.js         ← src/anthro.js
-    data/
-      day_wfa.json    ← all 12 JSON files from data/
-      ...</code></pre>
-
-        <p><strong>Important:</strong> call <code>createAnthro()</code> once at module level, not inside a component. The library pre-builds lookup maps at instantiation (~50 ms on a mid-range device).</p>
-<pre><button class="cp" onclick="cp(this)">Copy</button><code><span class="cm">// module-level singleton — do this</span>
+        <p><strong>Create the instance once at module level</strong>, not inside a component. The constructor builds O(1) lookup maps, which takes ~50 ms on a mid-range device.</p>
+<pre><button class="cp" onclick="cp(this)">Copy</button><code><span class="cm">// module-level singleton</span>
 <span class="kw">const</span> anthro = <span class="fn">createAnthro</span>(dayTables, monthTables)
 <span class="kw">export default</span> anthro
 
-<span class="cm">// not inside a component — avoid this</span>
-<span class="kw">function</span> MyComponent() {
-  <span class="kw">const</span> anthro = <span class="fn">createAnthro</span>(...)  <span class="cm">// rebuilds maps on every render</span>
-}</code></pre>
+<span class="cm">// not inside a component render function</span></code></pre>
       </section>
 
       <section id="missing">
         <h2>Missing inputs</h2>
-        <p>Any missing measurement returns a descriptive string instead of <code>null</code>. Other indicators are still computed normally.</p>
+        <p>When a measurement is absent, the affected indicator returns a descriptive string rather than <code>null</code>. All other indicators are computed normally.</p>
 <pre><button class="cp" onclick="cp(this)">Copy</button><code>anthro.<span class="fn">compute</span>({ sex: <span class="st">'F'</span>, dob: <span class="st">'2024-01-15'</span>, height_cm: <span class="nm">64</span> })
 
-r.lhfa           <span class="cm">// 'Moderately stunted'        ← computed</span>
+r.lhfa           <span class="cm">// 'Moderately stunted'        — computed</span>
 r.wfa            <span class="cm">// 'Missing weight to compute'</span>
-r.wflh           <span class="cm">// 'Missing weight to compute'</span>
-r.muac_threshold <span class="cm">// 'Missing muac to compute'</span>
-r.acfa           <span class="cm">// 'Missing muac to compute'</span></code></pre>
+r.muac_threshold <span class="cm">// 'Missing muac to compute'</span></code></pre>
       </section>
 
       <section id="input-ref">
@@ -606,17 +621,17 @@ r.acfa           <span class="cm">// 'Missing muac to compute'</span></code></pr
           <tbody>
             <tr><td><code>mode</code></td><td>string</td><td><code>'day'</code> (default) or <code>'month'</code></td><td>No</td></tr>
             <tr><td><code>sex</code></td><td>string|number</td><td><code>'male'</code> <code>'female'</code> <code>'m'</code> <code>'f'</code> <code>'M'</code> <code>'F'</code> <code>1</code> <code>2</code></td><td>Yes</td></tr>
-            <tr><td><code>dob</code></td><td>Date|string</td><td>Date of birth (ISO 8601 or Date object). Gives exact age in days.</td><td rowspan="3">One of</td></tr>
-            <tr><td><code>age_days</code></td><td>number</td><td>Exact age in complete days.</td></tr>
-            <tr><td><code>age_months</code></td><td>number</td><td>Completed months — converted via ×30.4375.</td></tr>
+            <tr><td><code>dob</code></td><td>Date|string</td><td>Date of birth (ISO 8601). Preferred — gives exact age in days.</td><td rowspan="3">One of</td></tr>
+            <tr><td><code>age_days</code></td><td>number</td><td>Exact age in complete days (integer).</td></tr>
+            <tr><td><code>age_months</code></td><td>number</td><td>Age in completed months, converted via ×30.4375.</td></tr>
             <tr><td><code>measured</code></td><td>Date|string</td><td>Date of measurement, used with <code>dob</code>. Defaults to today.</td><td>No</td></tr>
             <tr><td><code>weight_kg</code></td><td>number</td><td>Weight in kg.</td><td rowspan="2">One of</td></tr>
-            <tr><td><code>weight_g</code></td><td>number</td><td>Weight in grams.</td></tr>
-            <tr><td><code>height_cm</code></td><td>number</td><td>Length or height in cm.</td><td>—</td></tr>
-            <tr><td><code>muac_mm</code></td><td>number</td><td>MUAC in millimetres.</td><td rowspan="2">One of</td></tr>
-            <tr><td><code>muac_cm</code></td><td>number</td><td>MUAC in centimetres.</td></tr>
-            <tr><td><code>measure</code></td><td>'L'|'H'</td><td><code>'L'</code>=recumbent. <code>'H'</code>=standing. Auto if omitted.</td><td>No</td></tr>
-            <tr><td><code>oedema</code></td><td>boolean</td><td>Bilateral pitting oedema — adds warning to WFA and WFLH.</td><td>No</td></tr>
+            <tr><td><code>weight_g</code></td><td>number</td><td>Weight in g.</td></tr>
+            <tr><td><code>height_cm</code></td><td>number</td><td>Recumbent length or standing height in cm.</td><td>—</td></tr>
+            <tr><td><code>muac_mm</code></td><td>number</td><td>MUAC in mm.</td><td rowspan="2">One of</td></tr>
+            <tr><td><code>muac_cm</code></td><td>number</td><td>MUAC in cm.</td></tr>
+            <tr><td><code>measure</code></td><td>'L'|'H'</td><td><code>'L'</code> recumbent, <code>'H'</code> standing. Defaults to <code>'L'</code> for age &lt;24m, <code>'H'</code> for ≥24m.</td><td>No</td></tr>
+            <tr><td><code>oedema</code></td><td>boolean</td><td>Bilateral pitting oedema. Adds a warning to WFA and WFLH.</td><td>No</td></tr>
           </tbody>
         </table></div>
       </section>
@@ -626,20 +641,20 @@ r.acfa           <span class="cm">// 'Missing muac to compute'</span></code></pr
         <div class="tw"><table>
           <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>muac_threshold</code></td><td>string</td><td>SAM / MAM / Normal. Age-independent.</td></tr>
-            <tr><td><code>acfa</code></td><td>string</td><td>MUAC-for-age. SAM / MAM / Normal. Age 3–60 m.</td></tr>
-            <tr><td><code>bmi</code></td><td>string</td><td>BMI-for-age. SAM / MAM / Normal / Overweight / Obese. Age 0–60 m.</td></tr>
+            <tr><td><code>muac_threshold</code></td><td>string</td><td>SAM / MAM / Normal — absolute MUAC, age-independent.</td></tr>
+            <tr><td><code>acfa</code></td><td>string</td><td>MUAC-for-age. SAM / MAM / Normal. Ages 3–60 m.</td></tr>
+            <tr><td><code>bmi</code></td><td>string</td><td>BMI-for-age. SAM / MAM / Normal / Overweight / Obese. Ages 0–60 m.</td></tr>
             <tr><td><code>lhfa</code></td><td>string</td><td>Stunting. Normal / Moderately stunted / Severely stunted.</td></tr>
             <tr><td><code>wfa</code></td><td>string</td><td>Underweight. Normal / Moderately underweight / Severely underweight.</td></tr>
             <tr><td><code>wflh</code></td><td>string</td><td>Wasting. Normal / Moderate wasting / Severe wasting / Overweight / Obese.</td></tr>
-            <tr><td><code>z_lhfa</code> <code>z_wfa</code> <code>z_wflh</code> <code>z_bmi</code> <code>z_acfa</code></td><td>number</td><td>Z-score to 4 dp. Exact LMS — not pre-rounded.</td></tr>
+            <tr><td><code>z_lhfa</code> <code>z_wfa</code> <code>z_wflh</code> <code>z_bmi</code> <code>z_acfa</code></td><td>number</td><td>z-score to 4 dp. Exact LMS, not pre-rounded.</td></tr>
             <tr><td><code>bmi_val</code></td><td>number</td><td>BMI in kg/m² (4 dp).</td></tr>
-            <tr><td><code>flag_*</code></td><td>0|1</td><td>1 = biologically implausible z-score.</td></tr>
+            <tr><td><code>flag_lhfa</code> etc.</td><td>0|1</td><td>1 = biologically implausible z-score.</td></tr>
             <tr><td><code>height_cm_raw</code></td><td>number</td><td>Height as entered.</td></tr>
-            <tr><td><code>height_cm_adj</code></td><td>number</td><td>Height after ±0.7 cm correction if applied.</td></tr>
+            <tr><td><code>height_cm_adj</code></td><td>number</td><td>Height after ±0.7 cm correction (if applied).</td></tr>
             <tr><td><code>measure_correction</code></td><td>string|null</td><td>e.g. <code>"+0.7cm (H→L)"</code></td></tr>
             <tr><td><code>age_days</code> <code>age_months</code></td><td>number</td><td>Computed age.</td></tr>
-            <tr><td><code>errors</code></td><td>string[]</td><td>Fatal input problems. Computation stops.</td></tr>
+            <tr><td><code>errors</code></td><td>string[]</td><td>Fatal input errors.</td></tr>
             <tr><td><code>warnings</code></td><td>string[]</td><td>Non-fatal notices.</td></tr>
           </tbody>
         </table></div>
@@ -652,11 +667,11 @@ r.acfa           <span class="cm">// 'Missing muac to compute'</span></code></pr
         <div class="tw"><table>
           <thead><tr><th>Mode</th><th>Index</th><th>Coverage</th><th>Prefer when</th></tr></thead>
           <tbody>
-            <tr><td><code>'day'</code></td><td>1 row / day</td><td>0–1826 d</td><td>DOB is known</td></tr>
-            <tr><td><code>'month'</code></td><td>1 row / month</td><td>0–60 m</td><td>Only completed months available</td></tr>
+            <tr><td><code>'day'</code></td><td>1 row per day</td><td>0–1826 d</td><td>DOB is known — no rounding error</td></tr>
+            <tr><td><code>'month'</code></td><td>1 row per month</td><td>0–60 m</td><td>Only completed months are available</td></tr>
           </tbody>
         </table></div>
-        <p>Day-indexed tables are extracted from the R package <strong>anthro v1.1.0</strong> (<a href="https://github.com/WorldHealthOrganization/anthro" target="_blank" rel="noopener">WorldHealthOrganization/anthro</a>): <em>weianthro</em>, <em>lenanthro</em>, <em>bmianthro</em>, <em>acanthro</em>, <em>wflanthro</em>, <em>wfhanthro</em>. Same datasets as WHO igrowup SAS/SPSS/Stata software. Month-indexed tables are the WHO supplementary monthly tables from the same study.</p>
+        <p>Day-indexed tables are extracted from the R package <strong>anthro v1.1.0</strong> (<a href="https://github.com/WorldHealthOrganization/anthro" target="_blank" rel="noopener">WorldHealthOrganization/anthro</a>): datasets <em>weianthro</em>, <em>lenanthro</em>, <em>bmianthro</em>, <em>acanthro</em>, <em>wflanthro</em>, <em>wfhanthro</em> — the same datasets used in WHO igrowup SAS/SPSS/Stata packages. Month-indexed tables are the WHO supplementary monthly tables from the same study.</p>
       </section>
 
       <section id="formula">
@@ -666,42 +681,43 @@ r.acfa           <span class="cm">// 'Missing muac to compute'</span></code></pr
 z = ln(X/M) / S                 when L = 0
 
 SD23 adjustment when |z| > 3:
-  z = +3 + (X − SD3) / (SD3 − SD2)    when z > +3
-  z = −3 + (X − SD3') / (SD2' − SD3') when z < −3
-  SD3 = M(1 + L·S·3)^(1/L),  SD2 = M(1 + L·S·2)^(1/L)</code></pre>
+  z = +3 + (X − SD3)  / (SD3 − SD2)    when z > +3
+  z = −3 + (X − SD3') / (SD2' − SD3')  when z < −3
+  where SD3 = M(1 + L·S·3)^(1/L), SD2 = M(1 + L·S·2)^(1/L)</code></pre>
       </section>
 
       <section id="correction">
         <h2>Measure correction</h2>
-        <p>Source: WHO 2006, Chapter 7. Average recumbent–standing difference = 0.73 cm, applied as 0.7 cm.</p>
+        <p>Source: WHO 2006, Chapter 7. Mean difference between recumbent length and standing height = 0.73 cm, applied as 0.7 cm.</p>
         <div class="tw"><table>
-          <thead><tr><th>Table expects</th><th>Child measured as</th><th>Correction</th></tr></thead>
+          <thead><tr><th>Table expects</th><th>Child measured as</th><th>Correction applied</th></tr></thead>
           <tbody>
             <tr><td>L (recumbent)</td><td>H (standing)</td><td>height + 0.7 cm</td></tr>
             <tr><td>H (standing)</td><td>L (recumbent)</td><td>length − 0.7 cm</td></tr>
             <tr><td colspan="2">Same</td><td>None</td></tr>
           </tbody>
         </table></div>
-        <p>In day mode, the <code>loh</code> field from <em>lenanthro</em> per day determines the expected type (L for days 0–730, H for 731–1826). In month mode: L for months 0–23, H for months 24–60.</p>
+        <p>Day mode: the <code>loh</code> field in <em>lenanthro</em> per day specifies the expected type (L for days 0–730, H for days 731–1826). Month mode: L for months 0–23, H for months 24–60.</p>
       </section>
 
       <section id="cutpoints">
-        <h2>Cut-points</h2>
+        <h2>Classification cut-points</h2>
         <p>Source: WHO (2009), ISBN 9789241598163.</p>
         <div class="tw"><table>
           <thead><tr><th>Indicator</th><th>Severe / SAM</th><th>Moderate / MAM</th><th>Normal</th><th>Overweight / Obese</th></tr></thead>
           <tbody>
-            <tr><td>MUAC absolute</td><td>&lt;115 mm</td><td>115–&lt;125 mm</td><td>≥125 mm</td><td>—</td></tr>
-            <tr><td>ACFA, BMI</td><td>z &lt; −3</td><td>−3 ≤ z &lt; −2</td><td>z ≥ −2</td><td>z &gt;2 / z &gt;3</td></tr>
-            <tr><td>LHFA, WFA</td><td>z &lt; −3</td><td>−3 ≤ z &lt; −2</td><td>z ≥ −2</td><td>—</td></tr>
-            <tr><td>WFLH</td><td>z &lt; −3</td><td>−3 ≤ z &lt; −2</td><td>−2 ≤ z ≤ +2</td><td>z &gt;2 / z &gt;3</td></tr>
+            <tr><td>MUAC (absolute)</td><td>&lt;115 mm</td><td>115–&lt;125 mm</td><td>≥125 mm</td><td>—</td></tr>
+            <tr><td>ACFA, BMI-for-age</td><td>z &lt; −3</td><td>−3 ≤ z &lt; −2</td><td>z ≥ −2</td><td>z &gt;2 / z &gt;3</td></tr>
+            <tr><td>LHFA (stunting)</td><td>z &lt; −3</td><td>−3 ≤ z &lt; −2</td><td>z ≥ −2</td><td>—</td></tr>
+            <tr><td>WFA (underweight)</td><td>z &lt; −3</td><td>−3 ≤ z &lt; −2</td><td>z ≥ −2</td><td>—</td></tr>
+            <tr><td>WFLH (wasting)</td><td>z &lt; −3</td><td>−3 ≤ z &lt; −2</td><td>−2 ≤ z ≤ +2</td><td>z &gt;2 / z &gt;3</td></tr>
           </tbody>
         </table></div>
       </section>
 
       <section id="flags">
         <h2>Plausibility flags</h2>
-        <p>Source: WHO igrowup documentation (igrowup_standard.sas). Flag = 1 means the z-score is outside the biologically plausible range and should be reviewed.</p>
+        <p>Source: WHO igrowup documentation (igrowup_standard.sas). <code>flag_* = 1</code> indicates a z-score outside the biologically plausible range; the observation should be reviewed.</p>
         <div class="tw"><table>
           <thead><tr><th>Indicator</th><th>Flagged when</th></tr></thead>
           <tbody>
@@ -712,11 +728,20 @@ SD23 adjustment when |z| > 3:
       </section>
 
       <section id="precision">
-        <h2>Precision note</h2>
-        <p>This library uses the exact floating-point z-score for classification. R anthro rounds z to 2 decimal places before classifying — z = −2.003 becomes −2.00 and is classified as Normal instead of MAM. These borderline cases are clinically important, so we do not round.</p>
+        <h2>Precision</h2>
+        <p>This library classifies using the exact floating-point z-score without prior rounding. The R anthro package rounds z to 2 decimal places before classifying: a z-score of −2.003 rounds to −2.00 and is classified as Normal rather than MAM. This library retains full precision, which is relevant for observations near a cut-point boundary.</p>
       </section>
 
       <hr>
+
+      <section id="author">
+        <h2>Author</h2>
+        <p>
+          <strong>Ansh Kushwaha</strong><br>
+          <a href="mailto:ansh.k@alumni.iitm.ac.in">ansh.k@alumni.iitm.ac.in</a> ·
+          <a href="https://www.linkedin.com/in/ansh333k/" target="_blank" rel="noopener">linkedin.com/in/ansh333k</a>
+        </p>
+      </section>
 
       <section id="citations">
         <h2>Citations</h2>
@@ -724,10 +749,10 @@ SD23 adjustment when |z| > 3:
           <thead><tr><th>What</th><th></th></tr></thead>
           <tbody>
             <tr><td>Tables and methods</td><td>WHO MGRS (2006). <em>WHO Child Growth Standards: Methods and development.</em> Geneva: WHO. <a href="https://www.who.int/publications/i/item/924154693X" target="_blank" rel="noopener">ISBN 924154693X</a></td></tr>
-            <tr><td>igrowup day-indexed tables</td><td>WHO (2006). <a href="https://www.who.int/tools/child-growth-standards/software" target="_blank" rel="noopener">igrowup software</a> (SAS/SPSS/Stata/S-Plus)</td></tr>
+            <tr><td>igrowup day-indexed tables</td><td>WHO (2006). <a href="https://www.who.int/tools/child-growth-standards/software" target="_blank" rel="noopener">igrowup software</a></td></tr>
             <tr><td>R package (table source)</td><td>Borghi E et al. <em>anthro</em> R package v1.1.0. <a href="https://cran.r-project.org/package=anthro" target="_blank" rel="noopener">CRAN</a> · <a href="https://github.com/WorldHealthOrganization/anthro" target="_blank" rel="noopener">GitHub</a></td></tr>
-            <tr><td>LMS formula</td><td>WHO MGRS (2006), Technical Report §5.2, pp. 300–304</td></tr>
-            <tr><td>Cut-points</td><td>WHO (2009). <a href="https://www.who.int/publications/i/item/9789241598163" target="_blank" rel="noopener">SAM identification guidelines</a></td></tr>
+            <tr><td>Formula</td><td>WHO MGRS (2006), Technical Report §5.2, pp. 300–304</td></tr>
+            <tr><td>Cut-points</td><td>WHO (2009). <a href="https://www.who.int/publications/i/item/9789241598163" target="_blank" rel="noopener">ISBN 9789241598163</a></td></tr>
             <tr><td>Measure correction</td><td>WHO MGRS (2006), Chapter 7</td></tr>
             <tr><td>Plausibility flags</td><td>WHO igrowup documentation (igrowup_standard.sas / .ado)</td></tr>
           </tbody>
@@ -737,29 +762,31 @@ SD23 adjustment when |z| > 3:
       <section id="changelog">
         <h2>Changelog</h2>
         <h3>1.0.0</h3>
-        <ul style="padding-left:1.25rem">
+        <ul style="padding-left:1.1rem">
           <li>Day-indexed (WHO igrowup) and month-indexed (WHO supplementary) table modes</li>
-          <li>Exact floating-point z-scores — no pre-rounding before classification</li>
+          <li>Exact floating-point z-scores — not pre-rounded before classification</li>
           <li>Automatic ±0.7 cm measure correction from <code>loh</code> field</li>
           <li>6 indicators: muac_threshold, acfa, bmi, lhfa, wfa, wflh</li>
           <li>Missing input → descriptive string, not null</li>
           <li>Day 1826 (exactly 60 months) inclusive in all tables</li>
           <li>TypeScript declarations</li>
-          <li>Works in Node.js, browser, React Native</li>
+          <li>33 tests verified against R anthro v1.1.0</li>
         </ul>
       </section>
 
       <section id="contributing">
         <h2>Contributing</h2>
-        <p>To run tests: <code>node test/anthro.test.js</code> — no test framework, no dependencies.</p>
-        <p>The site deploys automatically via CI on every push to <code>main</code>. GitHub Pages setup: Settings → Pages → Source: <strong>GitHub Actions</strong>.</p>
-        <p>Full details: <a href="https://github.com/flame-cai/anthro/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">CONTRIBUTING.md</a><br>
-        Issues: <a href="https://github.com/flame-cai/anthro/issues" target="_blank" rel="noopener">github.com/flame-cai/anthro/issues</a><br>
-        Repository: <a href="https://github.com/flame-cai/anthro" target="_blank" rel="noopener">github.com/flame-cai/anthro</a></p>
+        <p>Tests: <code>node test/anthro.test.js</code> — no install required.</p>
+        <p>To re-export day-indexed tables from the R anthro package after a WHO update: <code>Rscript scripts/export-tables.R</code></p>
+        <p>
+          <a href="https://github.com/flame-cai/anthro/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">CONTRIBUTING.md</a> ·
+          <a href="https://github.com/flame-cai/anthro/issues" target="_blank" rel="noopener">Issues</a> ·
+          <a href="https://github.com/flame-cai/anthro" target="_blank" rel="noopener">github.com/flame-cai/anthro</a>
+        </p>
       </section>
-
     </div>
   </div>
+</div>
 </div>
 
 </main>
@@ -782,7 +809,7 @@ function applyTheme(t) {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   document.getElementById('thb').textContent = dark ? '○' : '●';
 }
-function thToggle() {
+function thTog() {
   _theme = _theme === 'dark' ? 'light' : _theme === 'light' ? 'auto' : 'dark';
   LS.set('a-theme', _theme); applyTheme(_theme);
 }
@@ -798,7 +825,7 @@ function applyFS(n) {
   document.querySelectorAll('.fsb')[1].disabled = _fs >= 24;
   LS.set('a-fs', _fs);
 }
-function fsChange(d) { applyFS(_fs + d); }
+function fsChg(d) { applyFS(_fs + d); }
 
 // ── routing ───────────────────────────────────────────────────────────────
 const ROUTES = {calc:'calc',calculator:'calc',tables:'tables',docs:'docs','':'calc'};
@@ -815,35 +842,90 @@ function go(id) {
   if (p === 'tables' && !_tData) loadTbl();
 }
 window.addEventListener('popstate', e => go(e.state?.p || 'calc'));
-document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', e => {
+document.querySelectorAll('.navlinks a').forEach(a => a.addEventListener('click', e => {
   e.preventDefault();
   go(a.getAttribute('href').replace('#/',''));
-  document.getElementById('navmenu').classList.remove('open');
+  document.getElementById('nm').classList.remove('open');
   document.getElementById('hmb').setAttribute('aria-expanded','false');
   document.getElementById('hmb').textContent='☰';
 }));
 document.getElementById('hmb').addEventListener('click', function() {
-  const open = document.getElementById('navmenu').classList.toggle('open');
+  const open = document.getElementById('nm').classList.toggle('open');
   this.setAttribute('aria-expanded', open);
   this.textContent = open ? '✕' : '☰';
 });
-
-// docs sidebar
 document.querySelectorAll('.docs-nav a').forEach(a => a.addEventListener('click', e => {
   e.preventDefault();
   document.getElementById(a.getAttribute('href').slice(1))?.scrollIntoView({behavior:'smooth',block:'start'});
   document.querySelectorAll('.docs-nav a').forEach(x => x.classList.remove('on'));
   a.classList.add('on');
 }));
-
-// copy buttons
-function cp(btn) {
-  navigator.clipboard.writeText(btn.closest('pre').querySelector('code').textContent).then(() => {
-    const orig = btn.textContent; btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = orig, 1500);
+document.querySelectorAll('.cp').forEach(b => b.addEventListener('click', function() {
+  navigator.clipboard.writeText(this.closest('pre').querySelector('code').textContent).then(() => {
+    const o = this.textContent; this.textContent = 'Copied!';
+    setTimeout(() => this.textContent = o, 1500);
   });
+}));
+
+// ── date input: DD/MM/YYYY format ─────────────────────────────────────────
+function fmtDate(el) {
+  let v = el.value.replace(/\D/g, '');
+  if (v.length > 8) v = v.slice(0, 8);
+  let out = '';
+  if (v.length > 4)      out = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+  else if (v.length > 2) out = v.slice(0,2) + '/' + v.slice(2);
+  else                   out = v;
+  el.value = out;
+  el.classList.remove('invalid');
+  const e = document.getElementById(el.id + '-err');
+  if (e) e.style.display = 'none';
 }
-document.querySelectorAll('.cp').forEach(b => b.addEventListener('click', function() { cp(this); }));
+
+function parseDMY(str) {
+  if (!str || str.length < 10) return null;
+  const [d, m, y] = str.split('/').map(Number);
+  if (!d || !m || !y || y < 1900 || y > 2100) return null;
+  const dt = new Date(Date.UTC(y, m-1, d));
+  if (isNaN(dt) || dt.getUTCDate() !== d || dt.getUTCMonth() !== m-1) return null;
+  return dt;
+}
+
+function toISO(dmy) {
+  const dt = parseDMY(dmy);
+  if (!dt) return null;
+  return dt.toISOString().split('T')[0];
+}
+
+function validateDob() {
+  const el = document.getElementById('dob');
+  const v = el.value;
+  if (!v) return true;
+  const dt = parseDMY(v);
+  const today = new Date();
+  if (!dt || dt > today) {
+    el.classList.add('invalid');
+    document.getElementById('dob-err').style.display = 'block';
+    return false;
+  }
+  return true;
+}
+
+// ── input validation ──────────────────────────────────────────────────────
+function validateNum(el, min, max) {
+  const v = parseFloat(el.value);
+  const errEl = document.getElementById(el.id + '-err');
+  if (el.value !== '' && (isNaN(v) || v < min || v > max)) {
+    el.classList.add('invalid');
+    if (errEl) errEl.style.display = 'block';
+  } else {
+    el.classList.remove('invalid');
+    if (errEl) errEl.style.display = 'none';
+  }
+}
+
+function hasInvalidInputs() {
+  return document.querySelectorAll('input.invalid, select.invalid').length > 0;
+}
 
 // ── calculator ────────────────────────────────────────────────────────────
 let _mode = 'day';
@@ -854,11 +936,11 @@ function setMode(m) {
   document.getElementById('md-day').setAttribute('aria-pressed', m==='day');
   document.getElementById('md-month').setAttribute('aria-pressed', m==='month');
   document.getElementById('mdesc').textContent = m === 'day'
-    ? 'WHO igrowup — 1 LMS row per day (0–1826 d), most precise'
-    : 'WHO monthly tables — 1 row per month (0–60 m)';
+    ? '1 LMS row per day (0–1826 d). Use when date of birth is known.'
+    : '1 LMS row per month (0–60 m). Use when only completed months are available.';
 }
 
-function cardClass(v) {
+function classTag(v) {
   if (!v || typeof v !== 'string') return 'c-na';
   if (v.includes('Missing')||v.includes('Age')||v.includes('out of')||v.startsWith('No ')) return 'c-na';
   if (v.includes('Severe') || v === 'SAM') return 'c-sev';
@@ -869,124 +951,119 @@ function cardClass(v) {
 }
 
 async function doCalc() {
+  if (!validateDob()) return;
+  if (hasInvalidInputs()) {
+    document.getElementById('rerr').innerHTML =
+      '<div class="alert ae"><span>⚠</span><div>Correct the highlighted fields before calculating.</div></div>';
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results-placeholder').style.display = 'none';
+    return;
+  }
+
   const btn = document.getElementById('cbtn');
   document.getElementById('cbtn-txt').textContent = 'Computing…';
   btn.disabled = true;
+
   try {
     await AnthroAPI.ready();
+
+    const dobIso  = toISO(document.getElementById('dob').value);
+    const mdateIso = toISO(document.getElementById('mdate').value);
+    const ht  = parseFloat(document.getElementById('ht').value);
+    const wt  = parseFloat(document.getElementById('wt').value);
+    const mu  = parseFloat(document.getElementById('muac').value);
+
     const r = AnthroAPI.compute({
-      mode: _mode,
-      sex:       document.getElementById('sex').value   || undefined,
-      dob:       document.getElementById('dob').value   || undefined,
-      measured:  document.getElementById('mdate').value || undefined,
-      height_cm: parseFloat(document.getElementById('ht').value)   || undefined,
-      weight_kg: parseFloat(document.getElementById('wt').value)   || undefined,
-      muac_cm:   parseFloat(document.getElementById('muac').value) || undefined,
-      measure:   document.getElementById('mpos').value  || undefined,
+      mode:     _mode,
+      sex:      document.getElementById('sex').value   || undefined,
+      dob:      dobIso   || undefined,
+      measured: mdateIso || undefined,
+      height_cm: isNaN(ht) ? undefined : ht,
+      weight_kg: isNaN(wt) ? undefined : wt,
+      muac_cm:   isNaN(mu) ? undefined : mu,
+      measure:  document.getElementById('mpos').value  || undefined,
     });
 
-    document.getElementById('rerr').innerHTML  = r.errors.length
+    // errors / warnings
+    document.getElementById('rerr').innerHTML = r.errors.length
       ? `<div class="alert ae"><span>⚠</span><div>${r.errors.join('<br>')}</div></div>` : '';
     document.getElementById('rwarn').innerHTML = r.warnings.length
       ? `<div class="alert aw"><span>⚑</span><div>${r.warnings.join('<br>')}</div></div>` : '';
 
-    const meta = [];
-    if (r.age_days  != null) meta.push(`Age: <b>${r.age_days}d</b> (${r.age_months}m)`);
-    if (r.sex)               meta.push(`Sex: <b>${r.sex==='M'?'Male':'Female'}</b>`);
-    if (r.weight_kg)         meta.push(`Weight: <b>${r.weight_kg} kg</b>`);
-    if (r.height_cm_raw) {
-      const c = r.measure_correction ? ` <abbr title="${r.measure_correction}" style="color:var(--am);cursor:help">*</abbr>` : '';
-      meta.push(`Height: <b>${r.height_cm_raw} cm</b>${c}`);
+    // summary bar
+    const sumItems = [];
+    if (r.age_days != null) {
+      const dob_str = document.getElementById('dob').value;
+      sumItems.push({l:'Date of birth', v: dob_str || '—'});
+      sumItems.push({l:'Age', v:`${r.age_days}d (${r.age_months}m)`});
     }
-    if (r.muac_mm)  meta.push(`MUAC: <b>${r.muac_mm} mm</b>`);
-    if (r.bmi_val)  meta.push(`BMI: <b>${r.bmi_val} kg/m²</b>`);
-    meta.push(`Mode: <b>${r.mode}-indexed</b>`);
-    document.getElementById('rmeta').innerHTML = meta.join('');
+    if (r.sex)        sumItems.push({l:'Sex',    v: r.sex==='M'?'Male':'Female'});
+    if (r.weight_kg)  sumItems.push({l:'Weight', v:`${r.weight_kg} kg`});
+    if (r.height_cm_raw) {
+      const hStr = r.height_cm_adj !== r.height_cm_raw
+        ? `${r.height_cm_raw} cm (adj. ${r.height_cm_adj} cm)`
+        : `${r.height_cm_raw} cm`;
+      sumItems.push({l:'Height', v: hStr});
+    }
+    if (r.muac_mm)   sumItems.push({l:'MUAC',   v:`${r.muac_mm} mm`});
+    if (r.bmi_val)   sumItems.push({l:'BMI',    v:`${r.bmi_val} kg/m²`});
+    sumItems.push({l:'Mode', v:`${r.mode}-indexed`});
 
+    document.getElementById('sumbar').innerHTML = sumItems
+      .map(x => `<div class="sum-item"><div class="sum-label">${x.l}</div><div class="sum-val">${x.v}</div></div>`)
+      .join('');
+
+    // indicators — ordered by clinical relevance (wasting → stunting → underweight → MUAC → BMI → ACFA)
     const INDS = [
-      {k:'muac_threshold', lbl:'MUAC threshold',     z:null,     desc:'Absolute · age-independent'},
-      {k:'acfa',           lbl:'ACFA · MUAC-age',     z:'z_acfa', desc:'3–60 months'},
-      {k:'bmi',            lbl:'BMI-for-age',          z:'z_bmi',  desc:'0–60 months'},
-      {k:'lhfa',           lbl:'LHFA · Stunting',      z:'z_lhfa', desc:'Length/height-for-age'},
-      {k:'wfa',            lbl:'WFA · Underweight',    z:'z_wfa',  desc:'Weight-for-age'},
-      {k:'wflh',           lbl:'WFLH · Wasting',       z:'z_wflh', desc:'Weight-for-length/height'},
+      {k:'wflh',           lbl:'Weight-for-length/height',    long:'Wasting',    z:'z_wflh'},
+      {k:'lhfa',           lbl:'Length/height-for-age',        long:'Stunting',    z:'z_lhfa'},
+      {k:'wfa',            lbl:'Weight-for-age',               long:'Underweight', z:'z_wfa'},
+      {k:'muac_threshold', lbl:'MUAC (absolute)',              long:'',            z:null},
+      {k:'bmi',            lbl:'BMI-for-age',                  long:'',            z:'z_bmi'},
+      {k:'acfa',           lbl:'MUAC-for-age',                 long:'',            z:'z_acfa'},
     ];
-    document.getElementById('rgrid').innerHTML = INDS.map(({k,lbl,z,desc}) => {
-      const v=r[k], zv=z?r[z]:null, flag=z?r['flag_'+k]:0;
-      return `<div class="ind ${cardClass(v)}" role="listitem" aria-label="${lbl}: ${v||'—'}">
-        <div class="ind-n">${lbl}${flag?' <span class="ind-flag">FLAG</span>':''}</div>
-        <div class="ind-v">${v||'—'}</div>
-        <div class="ind-s">${zv!=null?`z = ${zv.toFixed(4)}  ·  `:''}${desc}</div>
-      </div>`;
+
+    document.getElementById('ind-tbody').innerHTML = INDS.map(({k,lbl,long,z}) => {
+      const v    = r[k];
+      const zv   = z ? r[z] : null;
+      const flag = z ? r['flag_'+k] : 0;
+      const tag  = classTag(v);
+      const cls  = tag === 'c-na' ? 'c-na' : tag;
+
+      return `<tr>
+        <td>
+          <div class="ind-name">${lbl}${long ? ` <span class="dim" style="font-weight:400;font-size:.75rem">— ${long}</span>` : ''}</div>
+        </td>
+        <td>
+          <span class="ind-z">${zv != null ? zv.toFixed(4) : '—'}</span>
+          ${flag ? '<span class="ind-flag">FLAG</span>' : ''}
+        </td>
+        <td style="text-align:right">
+          <span class="ind-class ${cls}">${v || '—'}</span>
+        </td>
+      </tr>`;
     }).join('');
 
-    // Build structured info panel — every field from the output
-    const infoItems = [];
-
-    // Inputs (echoed back)
-    infoItems.push({k:'Table mode',    v: r.mode + '-indexed'});
-    infoItems.push({k:'Sex',           v: r.sex === 'M' ? 'Male' : r.sex === 'F' ? 'Female' : '—'});
-    if (r.age_days   != null) infoItems.push({k:'Age (days)',    v: r.age_days});
-    if (r.age_months != null) infoItems.push({k:'Age (months)',  v: r.age_months.toFixed(2)});
-    if (r.weight_kg  != null) infoItems.push({k:'Weight',        v: r.weight_kg + ' kg'});
-    if (r.height_cm_raw != null) {
-      infoItems.push({k:'Height entered',   v: r.height_cm_raw + ' cm'});
-      infoItems.push({k:'Measure position', v: r.measure === 'L' ? 'Recumbent (L)' : r.measure === 'H' ? 'Standing (H)' : '—'});
-      if (r.measure_correction) {
-        infoItems.push({k:'Correction applied', v: r.measure_correction, cls:'corr'});
-        infoItems.push({k:'Height adjusted',    v: r.height_cm_adj + ' cm', cls:'corr'});
-      } else {
-        infoItems.push({k:'Correction applied', v: 'None'});
-      }
-    }
-    if (r.muac_mm  != null) infoItems.push({k:'MUAC',      v: r.muac_mm + ' mm'});
-    if (r.bmi_val  != null) infoItems.push({k:'BMI value', v: r.bmi_val + ' kg/m²'});
-
-    // Z-scores
-    const ZF = [
-      ['z_lhfa','LHFA z-score'],['z_wfa','WFA z-score'],['z_wflh','WFLH z-score'],
-      ['z_bmi','BMI z-score'],['z_acfa','ACFA z-score']
-    ];
-    for (const [k,lbl] of ZF) {
-      if (r[k] != null) infoItems.push({k:lbl, v: r[k].toFixed(4)});
-    }
-
-    // Plausibility flags
-    const FL = [
-      ['flag_lhfa','LHFA flag'],['flag_wfa','WFA flag'],['flag_wflh','WFLH flag'],
-      ['flag_bmi','BMI flag'],['flag_acfa','ACFA flag']
-    ];
-    const anyFlag = FL.some(([k])=>r[k]===1);
-    if (anyFlag) {
-      for (const [k,lbl] of FL) {
-        infoItems.push({k:lbl, v: r[k]===1 ? '⚑ Implausible' : 'OK', cls: r[k]===1 ? 'flag' : 'ok'});
-      }
-    } else {
-      infoItems.push({k:'Plausibility flags', v:'All OK', cls:'ok'});
-    }
-
-    document.getElementById('r-info-grid').innerHTML = infoItems.map(({k,v,cls}) =>
-      `<div class="ri"><div class="ri-k">${k}</div><div class="ri-v${cls?' '+cls:''}">${v}</div></div>`
-    ).join('');
-    document.getElementById('r-info').style.display = 'block';
-
+    document.getElementById('rraw').textContent = JSON.stringify(r, null, 2);
     document.getElementById('rsrc').textContent =
       `WHO igrowup ${r.mode}-indexed · Restricted LMS + SD23 (WHO 2006 §5.2) · Verified vs R anthro v1.1.0`;
 
-    const res = document.getElementById('results');
-    res.style.display = 'block';
-    res.scrollIntoView({behavior:'smooth', block:'start'});
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results-placeholder').style.display = 'none';
+    document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+
   } catch(e) {
     document.getElementById('rerr').innerHTML =
       `<div class="alert ae"><span>⚠</span><div>${e.message}</div></div>`;
     document.getElementById('results').style.display = 'block';
+    document.getElementById('results-placeholder').style.display = 'none';
   } finally {
     document.getElementById('cbtn-txt').textContent = 'Calculate';
     btn.disabled = false;
   }
 }
 
-// ── WHO tables page ───────────────────────────────────────────────────────
+// ── WHO tables ────────────────────────────────────────────────────────────
 let _tMode='day', _tSex='M', _tData=null, _tFiltered=[], _tPage=0;
 const _tCache={}, PS=50;
 
@@ -996,9 +1073,9 @@ function setTM(m) {
     document.getElementById('tm-'+x).classList.toggle('on', x===m);
     document.getElementById('tm-'+x).setAttribute('aria-pressed', x===m);
   });
-  document.getElementById('tmhint').textContent = m === 'day'
-    ? '1 row per day (0–1826 d) from WHO igrowup software'
-    : '1 row per month (0–60 m) from WHO supplementary tables';
+  document.getElementById('tmhint').textContent = m==='day'
+    ? '1 row per day (0–1826 d) — WHO igrowup'
+    : '1 row per month (0–60 m) — WHO supplementary tables';
   loadTbl();
 }
 function setTS(s) {
@@ -1012,25 +1089,24 @@ function setTS(s) {
 async function loadTbl() {
   const ind = document.getElementById('tind').value;
   const key = `${_tMode}_${ind}`;
-  document.getElementById('tc').innerHTML = '<p style="padding:3rem;text-align:center;color:var(--txd)">Loading…</p>';
+  document.getElementById('tc').innerHTML = '<p style="padding:2.5rem;text-align:center;color:var(--txd)">Loading…</p>';
   if (!_tCache[key]) {
-    const r = await fetch('data/' + key + '.json');
+    const r = await fetch('data/'+key+'.json');
     _tCache[key] = await r.json();
   }
-  _tData = _tCache[key];
-  _tPage = 0;
+  _tData = _tCache[key]; _tPage = 0;
   document.getElementById('tsrch').value = '';
   renderTbl();
 }
 function renderTbl() {
   if (!_tData) return;
   const raw = _tData[_tSex];
-  if (!raw) { document.getElementById('tc').innerHTML = '<p style="padding:2rem">No data.</p>'; return; }
+  if (!raw) { document.getElementById('tc').innerHTML='<p style="padding:2rem">No data.</p>'; return; }
   const ind    = document.getElementById('tind').value;
   const isH    = ind==='wfl'||ind==='wfh';
   const idxLbl = isH ? 'Height (cm)' : (_tMode==='day' ? 'Age (days)' : 'Age (months)');
   const sv     = parseFloat(document.getElementById('tsrch').value);
-  let idx = Array.from({length:raw.i.length}, (_,i)=>i);
+  let idx = Array.from({length:raw.i.length},(_,i)=>i);
   if (!isNaN(sv)) idx = idx.filter(i => Math.abs(raw.i[i]-sv) <= (isH?0.15:0.5));
   _tFiltered = idx;
   const tot=idx.length, st=_tPage*PS, en=Math.min(st+PS,tot), pg=idx.slice(st,en);
@@ -1041,14 +1117,14 @@ function renderTbl() {
   document.getElementById('tinfo').textContent =
     `${indLbl} · ${_tSex==='M'?'Male':'Female'} · ${_tMode} · ${raw.i.length} rows · ${raw.i[0]}–${raw.i[raw.i.length-1]}`;
   const hasLoh = !!raw.loh;
-  let h = `<table><thead><tr><th>${idxLbl}</th><th>L</th><th>M</th><th>S</th>${hasLoh?'<th>Measure</th>':''}</tr></thead><tbody>`;
+  let h = `<table><thead><tr><th>${idxLbl}</th><th>L</th><th>M</th><th>S</th>${hasLoh?'<th>Measure (loh)</th>':''}</tr></thead><tbody>`;
   for (const i of pg) {
-    h += `<tr><td>${isH ? raw.i[i].toFixed(1) : raw.i[i]}</td>`;
+    h += `<tr><td>${isH?raw.i[i].toFixed(1):raw.i[i]}</td>`;
     h += `<td>${raw.l[i].toFixed(6)}</td><td>${raw.m[i].toFixed(6)}</td><td>${raw.s[i].toFixed(6)}</td>`;
     if (hasLoh) h += `<td>${raw.loh[i]}</td>`;
     h += '</tr>';
   }
-  if (!pg.length) h += `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--txd)">No matching rows</td></tr>`;
+  if (!pg.length) h += `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--txd)">No rows match</td></tr>`;
   h += '</tbody></table>';
   document.getElementById('tc').innerHTML = h;
 }
@@ -1058,34 +1134,33 @@ function tNext() { if((_tPage+1)*PS<_tFiltered.length){_tPage++;renderTbl();} }
 function dlCurrent() {
   if (!_tData) return;
   const ind = document.getElementById('tind').value;
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob([JSON.stringify({[_tSex]:_tData[_tSex]},null,2)], {type:'application/json'})),
+  Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([JSON.stringify({[_tSex]:_tData[_tSex]},null,2)],{type:'application/json'})),
     download: `${_tMode}_${ind}_${_tSex}.json`
-  });
-  a.click();
+  }).click();
 }
 async function dlAll() {
-  for (const p of ['day','month']) {
+  for (const p of ['day','month'])
     for (const n of ['wfa','lhfa','bmi','acfa','wfl','wfh']) {
       const text = await fetch('data/'+p+'_'+n+'.json').then(r=>r.text());
-      const a = Object.assign(document.createElement('a'), {
+      Object.assign(document.createElement('a'), {
         href: URL.createObjectURL(new Blob([text],{type:'application/json'})),
         download: `${p}_${n}.json`
-      });
-      a.click();
-      await new Promise(r=>setTimeout(r,100));
+      }).click();
+      await new Promise(r=>setTimeout(r,80));
     }
-  }
 }
 
 // ── init ──────────────────────────────────────────────────────────────────
 (function() {
   applyFS(_fs);
   applyTheme(_theme);
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('dob').max = today;
-  document.getElementById('mdate').max = today;
-  document.getElementById('mdate').value = today;
+  // Set today's date as default measurement date
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2,'0');
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const yyyy = now.getFullYear();
+  document.getElementById('mdate').value = `${dd}/${mm}/${yyyy}`;
   go((location.hash.replace('#/','').split('/')[0]) || 'calc');
   AnthroAPI.ready().catch(()=>{});
 })();

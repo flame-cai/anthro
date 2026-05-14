@@ -1,20 +1,44 @@
 {
   "name": "@flame-cai/anthro",
   "version": "1.0.0",
-  "description": "WHO 2006 Child Growth Standards — z-scores and classifications for 6 indicators",
+  "description": "WHO 2006 Child Growth Standards \u2014 z-scores and classifications for 6 indicators",
   "main": "src/anthro.js",
   "types": "src/anthro.d.ts",
-  "files": ["src/", "data/", "README.md"],
+  "files": [
+    "src/",
+    "data/",
+    "README.md"
+  ],
   "keywords": [
-    "who", "child-growth", "anthropometry", "z-score",
-    "stunting", "wasting", "underweight", "muac",
-    "lhfa", "wfa", "wflh", "bmi", "acfa", "igrowup"
+    "who",
+    "child-growth",
+    "anthropometry",
+    "z-score",
+    "stunting",
+    "wasting",
+    "underweight",
+    "muac",
+    "lhfa",
+    "wfa",
+    "wflh",
+    "bmi",
+    "acfa",
+    "igrowup"
   ],
   "scripts": {
-    "test": "node test/anthro.test.js"
+    "test": "node test/anthro.test.js",
+    "export-tables": "Rscript scripts/export-tables.R"
   },
-  "engines": {"node": ">=24"},
-  "repository": {"type": "git", "url": "https://github.com/flame-cai/anthro.git"},
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flame-cai/anthro.git"
+  },
   "homepage": "https://flame-cai.github.io/anthro",
-  "bugs": {"url": "https://github.com/flame-cai/anthro/issues"}
+  "bugs": {
+    "url": "https://github.com/flame-cai/anthro/issues"
+  },
+  "author": "Ansh Kushwaha <ansh.k@alumni.iitm.ac.in>"
 }

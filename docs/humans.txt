@@ -1,14 +1,17 @@
 /* TEAM */
-Project: anthro
-Github: https://github.com/flame-cai/anthro
+Name: Ansh Kushwaha
+Email: ansh.k@alumni.iitm.ac.in
+LinkedIn: https://www.linkedin.com/in/ansh333k/
+GitHub: https://github.com/flame-cai
+Project: https://github.com/flame-cai/anthro
 
 /* THANKS */
 WHO Multicentre Growth Reference Study Group (2006)
 R anthro package maintainers — WorldHealthOrganization/anthro
 
 /* TECHNOLOGY */
-JavaScript (vanilla, no framework)
-WHO igrowup LMS tables (weianthro, lenanthro, bmianthro, acanthro, wflanthro, wfhanthro)
-esbuild (bundler)
-GitHub Pages (hosting)
-GitHub Actions (CI/CD)
+JavaScript (no framework)
+WHO igrowup LMS tables
+esbuild — bundler
+GitHub Pages — hosting
+GitHub Actions — CI/CD
