@@ -32,7 +32,7 @@ jobs:
       - name: Run JS tests
         run: node test/anthro.test.js
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
       - name: Run Python tests
         run: python3 python/test_anthro.py
@@ -78,8 +78,15 @@ jobs:
   # VERSION file is the single source of truth; both packages are synced from it here.
   #
   # Required secrets (repo Settings → Secrets → Actions):
-  #   NPM_TOKEN   — npm access token with publish rights
-  #   PYPI_TOKEN  — PyPI API token (pypi-...)
+  #   NPM_TOKEN — npm access token with publish rights
+  #
+  # PyPI uses Trusted Publishing (OIDC) — no token needed.
+  # One-time setup on PyPI: https://pypi.org/manage/account/publishing/
+  #   Publisher:   GitHub Actions
+  #   Owner:       flame-cai
+  #   Repository:  anthro
+  #   Workflow:    ci.yml
+  #   Environment: pypi
   publish-npm:
     name: Publish to npm
     needs: test
@@ -112,10 +119,17 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    # id-token: write is required for Trusted Publishing (OIDC).
+    # No PYPI_TOKEN secret needed.
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/project/anthro/
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
 
       - name: Install build tools
@@ -123,7 +137,7 @@ jobs:
 
       # data/ lives at the repo root and is shared with the JS package.
       # Copy it into python/anthro/data/ so the wheel build is self-contained
-      # (python -m build creates a sdist first, then builds the wheel from that
+      # (python -m build creates an sdist first, then builds the wheel from that
       # sdist in a temp dir — relative paths like ../data don't survive that).
       # The copy is ephemeral: it exists only in this CI runner and is never
       # committed to the repo.
@@ -141,4 +155,3 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: python/dist/
-          password: ${{ secrets.PYPI_TOKEN }}
