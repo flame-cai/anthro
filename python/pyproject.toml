@@ -7,7 +7,6 @@ name = "anthro"
 dynamic = ["version"]
 description = "WHO 2006 Child Growth Standards — z-scores and classifications for 6 indicators"
 readme = "README.md"
-license = { text = "MIT" }
 requires-python = ">=3.8"
 keywords = [
     "who", "child-growth", "anthropometry", "z-score",
