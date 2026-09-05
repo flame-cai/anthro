@@ -1,11 +1,31 @@
 # anthro
 
-WHO 2006 Child Growth Standards — z-scores and nutritional classifications for 6 indicators.
+**WHO Child Growth Standards for Python & JavaScript**
 
-**Website:** https://flame-cai.github.io/anthro  
+An independent, open-source implementation of the **WHO Child Growth Standards** methodology, providing z-scores and nutritional classifications for six anthropometric indicators through Python and JavaScript/Node.js.
+
+> **Important:** `anthro` is an independent implementation and is **not an official WHO software package**. It has not been reviewed, verified, certified, or endorsed by WHO. For authoritative WHO methodology and software, please refer to the [WHO Child Growth Standards](https://www.who.int/tools/child-growth-standards).
+
+**Project:** [github.com/flame-cai/anthro](https://github.com/flame-cai/anthro)
+**Website:** [flame-cai.github.io/anthro](https://flame-cai.github.io/anthro)
 **Version:** 1.1.1
 
-Available for **JavaScript / Node.js** (`@flame-cai/anthro` on npm) and **Python** (`anthro` on PyPI).
+[![npm](https://img.shields.io/npm/v/@flame-cai/anthro?logo=npm)](https://www.npmjs.com/package/@flame-cai/anthro)
+[![PyPI](https://img.shields.io/pypi/v/anthro?logo=pypi)](https://pypi.org/project/anthro/)
+[![GitHub](https://img.shields.io/badge/GitHub-flame--cai%2Fanthro-black?logo=github)](https://github.com/flame-cai/anthro)
+
+## About
+
+WHO provides the official Child Growth Standards and programmatic implementations including the `anthro` R package. This project was created to make the methodology accessible directly from **Python and JavaScript**, which are widely used for data science, research, web applications, and software development.
+
+The project maintains shared reference data and implementations across both languages, with automated testing, batch processing, documentation, and CI/CD-based package and website deployment.
+
+### WHO resources
+
+* [WHO Child Growth Standards](https://www.who.int/tools/child-growth-standards)
+* [WHO Child Growth Standards — Software](https://www.who.int/tools/child-growth-standards/software)
+* [WHO `anthro` R package](https://github.com/WorldHealthOrganization/anthro)
+* [WHO Open Source Communication Channel](https://github.com/WorldHealthOrganization/open-source-communication-channel)
 
 ---
 
